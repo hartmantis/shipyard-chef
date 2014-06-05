@@ -6,7 +6,7 @@ Shipyard Cookbook
 [cookbook]: https://community.opscode.com/cookbooks/clamav
 [travis]: http://travis-ci.org/RoboticCheese/clamav-chef
 
-A cookbook for the Shipyard web UI for Docker.
+A Chef cookbook for the Shipyard container manager for Docker
 
 Requirements
 ============
