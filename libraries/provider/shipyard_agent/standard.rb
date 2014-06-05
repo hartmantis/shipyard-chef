@@ -33,8 +33,17 @@ class Chef
         #
         def action_install
           return if current_resource.installed?
-
           asset.run_action(:download)
+        end
+
+        #
+        # Delete the Shipyard agent's deploy dir
+        #
+        def action_uninstall
+          return unless current_resource.installed?
+          directory = Chef::Resource::Directory.new(deploy_dir, run_context)
+          directory.recursive(true)
+          directory.run_action(:delete)
         end
 
         private
