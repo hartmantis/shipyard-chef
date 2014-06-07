@@ -23,4 +23,5 @@ shipyard_agent 'local_agent' do
   version 'latest'
   host '127.0.0.1'
   action :install
+  # action :uninstall
 end

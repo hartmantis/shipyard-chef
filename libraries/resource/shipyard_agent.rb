@@ -27,7 +27,11 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class ShipyardAgent < Resource
-      attr_reader :installed, :enabled, :running
+      # Make each status check available as `status?`
+      [:installed, :enabled, :running].each do |m|
+        attr_accessor m
+        alias_method :"#{m}?", m
+      end
 
       def initialize(name, run_context = nil)
         super
@@ -43,9 +47,7 @@ class Chef
         ]
 
         # State attributes set by the provider
-        @installed = false
-        @enabled = false
-        @running = false
+        @installed, @enabled, @running = false, false, false
       end
 
       #
@@ -82,33 +84,6 @@ class Chef
       # @return [String]
       def version(arg = nil)
         set_or_return(:version, arg, kind_of: String)
-      end
-
-      #
-      # Determine if the agent is installed, as set by the provider
-      #
-      # @return [TrueClass, FalseClass]
-      #
-      def installed?
-        installed
-      end
-
-      #
-      # Determine if the agent service is enabled, as set by the provider
-      #
-      # @return [TrueClass, FalseClass]
-      #
-      def enabled?
-        enabled
-      end
-
-      #
-      # Determine if the agent service is running, as set by the provider
-      #
-      # @return [TrueClass, FalseClass]
-      #
-      def running?
-        running
       end
     end
   end

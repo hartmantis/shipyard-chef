@@ -47,6 +47,7 @@ class Chef
         @current_resource ||= Resource::ShipyardAgent.new(new_resource.name)
         @current_resource.install_type(new_resource.install_type)
         @current_resource.version(new_resource.version)
+        @current_resource.installed = installed? ? true : false
         @current_resource
       end
 
@@ -57,8 +58,14 @@ class Chef
         stop && start
       end
 
+      # Actions and status checks vary by installation method, need to be
+      # defined by the specific providers
       [:install, :uninstall, :enable, :disable, :start, :stop].each do |act|
         define_method(:"action_#{act}", proc { fail(NotImplemented, act) })
+      end
+
+      [:installed?, :enabled?, :running?].each do |status|
+        define_method(status, proc { fail(NotImplemented, status) })
       end
     end
 
@@ -66,8 +73,8 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class NotImplemented < StandardError
-      def initialize(action)
-        super("Action `#{action}` has not been implemented")
+      def initialize(method)
+        super("Method `#{method}` has not been implemented")
       end
     end
   end
