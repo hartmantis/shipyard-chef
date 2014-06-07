@@ -20,7 +20,6 @@
 
 require 'chef/provider'
 require 'fileutils'
-require 'octokit'
 
 class Chef
   class Provider
@@ -29,6 +28,14 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Standard < ShipyardAgent
+        #
+        # Install the octokit gem for all the actions that use it
+        #
+        def initialize(new_resource, run_context)
+          super
+          chef_gem.run_action(:install)
+        end
+
         #
         # Check whether the Shipyard agent is installed
         #
@@ -48,8 +55,7 @@ class Chef
             # TODO: Create a bin/ subdir and put the script there
             directory.run_action(:create)
             Chef::Log.debug("Downloading #{asset} from GitHub")
-            asset.run_action(:download)
-            download_and_deploy
+            remote_file.run_action(:create)
           end
         end
 
@@ -59,7 +65,7 @@ class Chef
         def action_uninstall
           if current_resource.installed?
             Chef::Log.info("Uninstalling #{current_resource}")
-            file.run_action(:delete)
+            remote_file.run_action(:delete)
             directory.run_action(:delete) if ::Dir.new(deploy_dir).count == 2
           else
             Chef::Log.info("Skipping #{current_resource} (not installed)")
@@ -69,29 +75,17 @@ class Chef
         private
 
         #
-        # Download the GitHubAsset and deploy it to the deploy_dir
+        # The RemoteFile resource for the deployed artifact
         #
-        def download_and_deploy
-          Chef::Log.debug("Downloading #{asset} from GitHub")
-          asset.run_action(:download)
-          Chef::Log.debug("Moving #{asset_file} into place")
-          # TODO: Does Chef not have a resource that can handle this?
-          FileUtils.mv(asset.asset_path,
-                       ::File.join(deploy_dir, asset_file),
-                       force: true)
-          FileUtils.chmod(0755, ::File.join(deploy_dir, asset_file))
-        end
-
+        # @return [Chef::Resource::RemoteFile]
         #
-        # The File resource for the deployed artifact
-        #
-        # @return [Chef::Resource::File]
-        #
-        def file
-          @file ||= Chef::Resource::File.new(
+        def remote_file
+          @remote_file ||= Chef::Resource::RemoteFile.new(
             ::File.join(deploy_dir, asset_file), run_context
           )
-          @file
+          @remote_file.mode('0755')
+          @remote_file.source(asset.asset_url({}))
+          @remote_file
         end
 
         #
@@ -106,19 +100,33 @@ class Chef
         end
 
         #
-        # The GitHubAsset object to install Shipyard from
+        # The GitHubCB::Asset object to install Shipyard from
         #
-        # @return [Chef::Resource::GitHubAsset]
+        # @return [GitHubCB::Asset]
         #
         def asset
-          @asset ||= Chef::Resource::GithubAsset.new(asset_file, run_context)
-          @asset.repo(repo)
-          @asset.release(revision)
-          @asset
+          # Use GitHubCB::Asset directly; the GitHubAsset resource doesn't
+          # provide read access to the asset's URL, which we need for the
+          # RemoteFile resource
+          #
+          # TODO: We're already calling Octokit directly below; is the github
+          # cookbook really necessary here anymore?
+          @asset ||= GithubCB::Asset.new(repo,
+                                         name: asset_file,
+                                         release: release)
         end
 
         #
-        # The filename for the GitHub asset tarball
+        # The ChefGem resource for octokit
+        #
+        # @return [Chef::Resource::ChefGem]
+        #
+        def chef_gem
+          @chef_gem ||= Chef::Resource::ChefGem.new('octokit', run_context)
+        end
+
+        #
+        # The filename for the GitHub asset
         #
         # @return [String]
         #
@@ -128,13 +136,14 @@ class Chef
         end
 
         #
-        # Translate the 'version' of the resource to a GitHub tag
+        # Translate the 'version' of the resource to a GitHub release string
         #
         # @return [String]
         #
-        def revision
+        def release
           case new_resource.version
           when 'latest'
+            require 'octokit'
             Octokit.releases(repo).first[:tag_name]
           else
             "v#{new_resource.version}"
