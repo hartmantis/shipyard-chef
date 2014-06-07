@@ -20,6 +20,7 @@
 
 require 'chef/provider'
 require 'fileutils'
+require 'uri'
 
 class Chef
   class Provider
@@ -40,8 +41,9 @@ class Chef
         # Check whether the Shipyard agent is installed
         #
         def installed?
-          # TODO: How should upgrades be handled here?
-          ::File.exist?(::File.join(deploy_dir, asset_file))
+          return false unless ::File.exist?(::File.join(deploy_dir, asset_file))
+          return false unless new_resource.version == current_resource.version
+          true
         end
 
         #
@@ -49,12 +51,13 @@ class Chef
         #
         def action_install
           if current_resource.installed?
-            Chef::Log.info("Skipping #{current_resource} (already installed)")
+            Chef::Log.info("Skipping #{current_resource}, #{release} " \
+                           '(already installed)')
           else
-            Chef::Log.info("Installing #{current_resource}")
+            Chef::Log.info("Installing #{current_resource}, #{release}")
             # TODO: Create a bin/ subdir and put the script there
             directory.run_action(:create)
-            Chef::Log.debug("Downloading #{asset} from GitHub")
+            Chef::Log.debug("Downloading #{asset_file} from GitHub")
             remote_file.run_action(:create)
           end
         end
@@ -80,11 +83,12 @@ class Chef
         # @return [Chef::Resource::RemoteFile]
         #
         def remote_file
+          Chef::Log.info("Pulling file down from #{asset_url}")
           @remote_file ||= Chef::Resource::RemoteFile.new(
             ::File.join(deploy_dir, asset_file), run_context
           )
           @remote_file.mode('0755')
-          @remote_file.source(asset.asset_url({}))
+          @remote_file.source(asset_url.to_s)
           @remote_file
         end
 
@@ -100,29 +104,21 @@ class Chef
         end
 
         #
-        # The GitHubCB::Asset object to install Shipyard from
-        #
-        # @return [GitHubCB::Asset]
-        #
-        def asset
-          # Use GitHubCB::Asset directly; the GitHubAsset resource doesn't
-          # provide read access to the asset's URL, which we need for the
-          # RemoteFile resource
-          #
-          # TODO: We're already calling Octokit directly below; is the github
-          # cookbook really necessary here anymore?
-          @asset ||= GithubCB::Asset.new(repo,
-                                         name: asset_file,
-                                         release: release)
-        end
-
-        #
         # The ChefGem resource for octokit
         #
         # @return [Chef::Resource::ChefGem]
         #
         def chef_gem
           @chef_gem ||= Chef::Resource::ChefGem.new('octokit', run_context)
+        end
+
+        #
+        # Construct a full URL to the GitHub release
+        #
+        # @return [URI]
+        def asset_url
+          URI("https://github.com/#{repo}/releases/download/#{release}/" <<
+              asset_file)
         end
 
         #
@@ -156,7 +152,7 @@ class Chef
         # @return [String]
         #
         def repo
-          'shipyard/shipyard-agent'
+          "shipyard/#{asset_file}"
         end
 
         #
