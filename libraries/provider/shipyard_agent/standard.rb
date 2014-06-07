@@ -20,6 +20,7 @@
 
 require 'chef/provider'
 require 'fileutils'
+require 'octokit'
 
 class Chef
   class Provider
@@ -82,6 +83,8 @@ class Chef
         #
         # The Directory resource for the deployed artifact
         #
+        # @return [Chef::Resource::Directory]
+        #
         def directory
           @directory ||= Chef::Resource::Directory.new(deploy_dir, run_context)
           @directory.recursive(true)
@@ -91,9 +94,11 @@ class Chef
         #
         # The GitHubAsset object to install Shipyard from
         #
+        # @return [Chef::Resource::GitHubAsset]
+        #
         def asset
           @asset ||= Chef::Resource::GithubAsset.new(asset_file, run_context)
-          @asset.repo('shipyard/shipyard-agent')
+          @asset.repo(repo)
           @asset.release(revision)
           @asset
         end
@@ -116,11 +121,19 @@ class Chef
         def revision
           case new_resource.version
           when 'latest'
-            # TODO: Don't hard code this here
-            'v0.3.1'
+            Octokit.releases(repo).first[:tag_name]
           else
             "v#{new_resource.version}"
           end
+        end
+
+        #
+        # The GitHub repo for the Shipyard agent
+        #
+        # @return [String]
+        #
+        def repo
+          'shipyard/shipyard-agent'
         end
 
         #
