@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Recipe:: agent
+# Attributes:: default
 #
 # Copyright 2014, Jonathan Hartman
 #
@@ -18,10 +18,6 @@
 # limitations under the License.
 #
 
-shipyard_agent 'local_agent' do
-  install_type node['shipyard']['install_type']
-  version node['shipyard']['version']
-  host node['shipyard']['host']
-  action :install
-  # action :uninstall
-end
+default['shipyard']['install_type'] = :standard
+default['shipyard']['version'] = 'latest'
+default['shipyard']['host'] = '127.0.0.1'
