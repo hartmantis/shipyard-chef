@@ -59,7 +59,8 @@ class Chef
         def action_uninstall
           if current_resource.installed?
             Chef::Log.info("Uninstalling #{current_resource}")
-            directory.run_action(:delete)
+            file.run_action(:delete)
+            directory.run_action(:delete) if ::Dir.new(deploy_dir).count == 2
           else
             Chef::Log.info("Skipping #{current_resource} (not installed)")
           end
@@ -74,10 +75,23 @@ class Chef
           Chef::Log.debug("Downloading #{asset} from GitHub")
           asset.run_action(:download)
           Chef::Log.debug("Moving #{asset_file} into place")
+          # TODO: Does Chef not have a resource that can handle this?
           FileUtils.mv(asset.asset_path,
                        ::File.join(deploy_dir, asset_file),
                        force: true)
           FileUtils.chmod(0755, ::File.join(deploy_dir, asset_file))
+        end
+
+        #
+        # The File resource for the deployed artifact
+        #
+        # @return [Chef::Resource::File]
+        #
+        def file
+          @file ||= Chef::Resource::File.new(
+            ::File.join(deploy_dir, asset_file), run_context
+          )
+          @file
         end
 
         #
@@ -142,8 +156,7 @@ class Chef
         # @return [String]
         #
         def deploy_dir
-          # TODO: Don't hard code this here
-          '/opt/shipyard_agent'
+          '/usr/bin'
         end
       end
     end
