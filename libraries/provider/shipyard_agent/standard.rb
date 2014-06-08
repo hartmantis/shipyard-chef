@@ -20,6 +20,7 @@
 
 require 'chef/provider'
 require 'fileutils'
+require 'mixlib/shellout'
 require 'uri'
 
 class Chef
@@ -29,28 +30,33 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Standard < ShipyardAgent
-        #
-        # Install the octokit gem for all the actions that use it
-        #
-        def initialize(new_resource, run_context)
-          super
-          chef_gem.run_action(:install)
-        end
+        attr_accessor :current_resource
 
         #
         # Check whether the Shipyard agent is installed
         #
+        # @return [TrueClass, FalseClass]
+        #
         def installed?
-          return false unless ::File.exist?(::File.join(deploy_dir, asset_file))
-          return false unless new_resource.version == current_resource.version
-          true
+          ::File.exist?(::File.join(deploy_dir, asset_file))
+        end
+
+        #
+        # Get the version of the agent installed
+        #
+        # @return [String]
+        #
+        def installed_version?
+          shout = Mixlib::ShellOut.new("#{deploy_dir}/#{asset_file} --version")
+          shout.run_command.stdout.strip
         end
 
         #
         # Install the Shipyard agent via GitHub artifact repo
         #
         def action_install
-          if current_resource.installed?
+          chef_gem.run_action(:install)
+          if current_resource.installed? && !needs_updowngrade?
             Chef::Log.info("Skipping #{current_resource}, #{release} " \
                            '(already installed)')
           else

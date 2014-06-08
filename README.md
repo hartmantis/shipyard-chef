@@ -33,6 +33,11 @@ To run the entire suite of tests, simple:
 
     rake
 
+To Do
+=====
+* TODO: Is there any way to allow someone to "upgrade" from a container to a
+GitHub deploy or vice versa?
+
 Contributing
 ============
 1. Fork it
