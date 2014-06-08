@@ -19,9 +19,10 @@
 #
 
 shipyard_agent 'local_agent' do
-  install_type node['shipyard']['install_type']
-  version node['shipyard']['version']
-  host node['shipyard']['host']
+  install_type node['shipyard']['agent']['install_type']
+  version node['shipyard']['agent']['version']
+  host node['shipyard']['agent']['host']
+  key node['shipyard']['agent']['key']
   action :install
   # action :uninstall
 end

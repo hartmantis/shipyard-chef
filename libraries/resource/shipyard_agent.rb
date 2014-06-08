@@ -61,6 +61,16 @@ class Chef
       end
 
       #
+      # The client key to connect to the host with
+      #
+      # @param [String] arg
+      # @return [String]
+      #
+      def key(arg = nil)
+        set_or_return(:key, arg, kind_of: [String, NilClass])
+      end
+
+      #
       # The install type for the agent: standard (GitHub) or container
       #
       # @param [Symbol] arg

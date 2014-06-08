@@ -62,19 +62,21 @@ class Chef
           else
             Chef::Log.info("Installing #{current_resource}, #{release}")
             # TODO: Create a bin/ subdir and put the script there
-            directory.run_action(:create)
-            Chef::Log.debug("Downloading #{asset_file} from GitHub")
-            remote_file.run_action(:create)
+            [directory, remote_file, init_script, conf_file].each do |r|
+              r.run_action(:create)
+            end
           end
         end
 
         #
-        # Delete the Shipyard agent's deploy dir
+        # Delete the Shipyard agent's deployed files
         #
         def action_uninstall
           if current_resource.installed?
             Chef::Log.info("Uninstalling #{current_resource}")
-            remote_file.run_action(:delete)
+            [conf_file, init_script, remote_file].each do |f|
+              f.run_action(:delete)
+            end
             directory.run_action(:delete) if ::Dir.new(deploy_dir).count == 2
           else
             Chef::Log.info("Skipping #{current_resource} (not installed)")
@@ -84,12 +86,41 @@ class Chef
         private
 
         #
+        # The agent config file
+        #
+        # @return [Chef::Resource::Template]
+        #
+        def conf_file
+          @conf_file ||= Chef::Resource::Template.new(
+            ::File.join('/etc/default', "#{asset_file}.conf"), run_context
+          )
+          @conf_file.cookbook(new_resource.cookbook_name.to_s)
+          @conf_file.source('shipyard-agent.default.erb')
+          @conf_file.variables(host_url: new_resource.host,
+                               key: new_resource.key)
+          @conf_file
+        end
+
+        #
+        # The init script file (Upstart only)
+        #
+        # @return [Chef::Resource::Template]
+        #
+        def init_script
+          @init_script ||= Chef::Resource::Template.new(
+            ::File.join('/etc/init', asset_file), run_context
+          )
+          @init_script.cookbook(new_resource.cookbook_name.to_s)
+          @init_script.source('upstart/shipyard-agent.conf.init.erb')
+          @init_script
+        end
+
+        #
         # The RemoteFile resource for the deployed artifact
         #
         # @return [Chef::Resource::RemoteFile]
         #
         def remote_file
-          Chef::Log.info("Pulling file down from #{asset_url}")
           @remote_file ||= Chef::Resource::RemoteFile.new(
             ::File.join(deploy_dir, asset_file), run_context
           )
