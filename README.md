@@ -10,12 +10,52 @@ A Chef cookbook for the Shipyard container manager for Docker
 
 Requirements
 ============
-
-Attributes
-==========
+The binaries distributed for Shipyard are compiled for Ubuntu, so a 'standard'
+install is not possible on RHEL family systems.
 
 Usage
 =====
+This cookbook contains a set of resources that can be consumed directly by
+your own recipes, and also contains some basic recipes of its own, if that
+suits your needs better.
+
+Resources
+=========
+
+***shipyard_agent***
+
+Installs and configures an instance of Shipyard's agent application to connect
+to the primary Shipyard host. A number of options are available:
+
+* `install_type` - The agent can be installed as a Docker `:container` or as a
+  more `:standard` (the default) binary application
+* `version` - The version of the agent to install or the string `'latest'` (the
+  default)
+* `host` - The Shipyard host the agent will connect to (default:
+  `'http://localhost:8000'`)
+* `key` - The client key the agent will use when connecting to the host
+  (defaults to `nil` and attempting to register with the host, generating a
+  request that needs to be approved in the Shipyard UI
+* `action` - Any of `:install`, `:uninstall`, `:enable`, `:disable`, `:start`,
+  `:stop`, `:restart` (defaults to `[:install, :enable, :start]`)
+
+For example, to install the latest version as a container in Docker:
+
+    shipyard_agent 'agent' do
+      install_type :container
+      # version 'latest' # The default behavior
+      host 'http://1.2.3.4:8000'
+      key '1234567890qwertyuiop'
+      action [:install, :enable, :start] # The default behavior
+    end
+
+Recipes
+=======
+
+***agent***
+
+Implements the `shipyard_agent` resource to do an optional install driven by a
+set of node attributes under the `node['shipyard']['agent']` namespace
 
 Testing
 =======
