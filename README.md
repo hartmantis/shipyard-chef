@@ -35,6 +35,8 @@ To run the entire suite of tests, simple:
 
 To Do
 =====
+* TODO: The shipyard-agent binary distributed via GitHub doesn't run under
+CentOS. Support can be added if it's switched to use an Omnibus project.
 * TODO: Is there any way to allow someone to "upgrade" from a container to a
 GitHub deploy or vice versa?
 
