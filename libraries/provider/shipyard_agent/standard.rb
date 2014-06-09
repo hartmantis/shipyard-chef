@@ -19,9 +19,14 @@
 #
 
 require 'chef/provider'
+require 'chef/resource/chef_gem'
+require 'chef/resource/directory'
+require 'chef/resource/remote_file'
+require 'chef/resource/template'
 require 'fileutils'
 require 'mixlib/shellout'
 require 'uri'
+require_relative '../shipyard_agent'
 
 class Chef
   class Provider
@@ -90,6 +95,7 @@ class Chef
         #
         # @return [Chef::Resource::Template]
         #
+        # TODO: Make the conf file its own Chef resource/provider
         def conf_file
           @conf_file ||= Chef::Resource::Template.new(
             ::File.join('/etc/default', "#{asset_file}.conf"), run_context
@@ -106,6 +112,7 @@ class Chef
         #
         # @return [Chef::Resource::Template]
         #
+        # TODO: Make the init file its own Chef resource/provider
         def init_script
           @init_script ||= Chef::Resource::Template.new(
             ::File.join('/etc/init', asset_file), run_context

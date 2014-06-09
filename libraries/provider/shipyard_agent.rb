@@ -19,9 +19,7 @@
 #
 
 require 'chef/provider'
-require 'chef/provider/deploy'
-require_relative 'shipyard_agent/container'
-require_relative 'shipyard_agent/standard'
+require_relative '../resource/shipyard_agent'
 
 class Chef
   class Provider

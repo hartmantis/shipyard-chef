@@ -18,3 +18,4 @@
 # limitations under the License.
 #
 
+require_relative '../provider/shipyard_app'

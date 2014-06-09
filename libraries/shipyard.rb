@@ -19,6 +19,8 @@
 #
 
 require_relative 'provider/shipyard_agent'
+require_relative 'provider/shipyard_agent/container'
+require_relative 'provider/shipyard_agent/standard'
 require_relative 'provider/shipyard_app'
 require_relative 'resource/shipyard_agent'
 require_relative 'resource/shipyard_app'

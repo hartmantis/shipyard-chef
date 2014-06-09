@@ -20,6 +20,9 @@
 
 require 'chef/resource'
 require 'chef/mixin/params_validate'
+require_relative '../provider/shipyard_agent'
+require_relative '../provider/shipyard_agent/container'
+require_relative '../provider/shipyard_agent/standard'
 
 class Chef
   class Resource

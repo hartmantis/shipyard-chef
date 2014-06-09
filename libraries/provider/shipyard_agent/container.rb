@@ -19,6 +19,7 @@
 #
 
 require 'chef/provider'
+require_relative '../shipyard_agent'
 
 class Chef
   class Provider
