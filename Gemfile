@@ -9,8 +9,7 @@ group :development, :test do
   gem 'cane'
   gem 'countloc'
   gem 'rubocop'
-  # TODO: Most recent Foodcritic gem has a dep conflict w/ Chef
-  gem 'foodcritic', github: 'acrmp/foodcritic'
+  gem 'foodcritic'
   # TODO: Guard-foodcritic has a dep conflict w/ Berkshelf 3
   # gem 'guard-foodcritic'
   gem 'rspec'
@@ -22,10 +21,6 @@ group :development, :test do
   gem 'kitchen-vagrant'
   gem 'vagrant-wrapper'
   gem 'guard-kitchen'
-
-  # Gems used on the remote Kitchen machine(s) but not locally
-  # gem 'cucumber'
-  # gem 'serverspec'
 end
 
 gem 'chef'
