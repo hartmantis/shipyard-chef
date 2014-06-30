@@ -41,9 +41,12 @@ class Chef
         @resource_name = :shipyard_agent
 
         # Set all the default actions and attributes
-        @provider = Chef::Provider::ShipyardAgent::Standard
-        @install_type = :standard
-        @version = 'latest'
+        @provider = case install_type
+                    when :standard
+                      Provider::ShipyardAgent::Standard
+                    when :container
+                      Provider::ShipyardAgent::Container
+                    end
         @action = [:install, :enable, :start]
         @allowed_actions = [
           :install, :uninstall, :enable, :disable, :start, :stop, :restart
@@ -60,7 +63,8 @@ class Chef
       # @return [String]
       #
       def host(arg = nil)
-        set_or_return(:host, arg, kind_of: String)
+        # TODO: Validate that the host is an IP or resolves to one
+        set_or_return(:host, arg, kind_of: String, default: '127.0.0.1')
       end
 
       #
@@ -80,14 +84,12 @@ class Chef
       # @return [Symbol]
       #
       def install_type(arg = nil)
-        # TODO: Generate a class name based on the arg instead of using a case
-        arg != @install_type && @provider = case arg
-                                            when :standard
-                                              Provider::ShipyardAgent::Standard
-                                            when :container
-                                              Provider::ShipyardAgent::Container
-                                            end
-        set_or_return(:install_type, arg, kind_of: Symbol)
+        arg = arg.to_sym if arg
+        set_or_return(:install_type,
+                      arg,
+                      kind_of: Symbol,
+                      equal_to: [:standard, :container],
+                      default: :standard)
       end
 
       #
@@ -97,7 +99,7 @@ class Chef
       # @return [String]
       #
       def version(arg = nil)
-        set_or_return(:version, arg, kind_of: String)
+        set_or_return(:version, arg, kind_of: String, default: 'latest')
       end
     end
   end
