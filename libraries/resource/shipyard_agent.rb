@@ -95,6 +95,7 @@ class Chef
       #
       # @param [String] arg
       # @return [String]
+      #
       def version(arg = nil)
         set_or_return(:version, arg, kind_of: String)
       end

@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Library:: shipyard
+# Library:: provider
 #
 # Copyright 2014, Jonathan Hartman
 #
@@ -18,5 +18,5 @@
 # limitations under the License.
 #
 
-require_relative 'provider'
-require_relative 'resource'
+require_relative 'provider/shipyard_agent'
+require_relative 'provider/shipyard_app'
