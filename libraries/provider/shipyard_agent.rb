@@ -44,37 +44,35 @@ class Chef
       def load_current_resource
         @current_resource ||= Resource::ShipyardAgent.new(new_resource.name)
         @current_resource.install_type(new_resource.install_type)
-        if installed?
-          @current_resource.installed = installed?
-          @current_resource.version(installed_version?)
-        end
+        @current_resource.host(installed_host)
+        @current_resource.key(installed_key)
+        @current_resource.version(installed_version)
+        @current_resource.installed = installed?
+        @current_resource.enabled = enabled?
+        @current_resource.running = running?
         @current_resource
-      end
-
-      #
-      # Do the current version and desired version match?
-      #
-      # @return [TrueClass, FalseClass]
-      #
-      def needs_updowngrade?
-        current_resource.version != new_resource.version
       end
 
       #
       # Restart the Shipyard agent
       #
       def action_restart
-        stop && start
+        action_stop && action_start
       end
 
-      # Actions and status checks vary by installation method, need to be
-      # defined by the specific providers
+      # Each implementation of the provider needs to define certain actions...
       [:install, :uninstall, :enable, :disable, :start, :stop].each do |act|
         define_method(:"action_#{act}", proc { fail(NotImplemented, act) })
       end
 
+      # ...and certain statuses...
       [:installed?, :enabled?, :running?].each do |status|
         define_method(status, proc { fail(NotImplemented, status) })
+      end
+
+      # ...and certain sub-resources
+      [:package, :service].each do |resource|
+        define_method(resource, proc { fail(NotImplemented, resource) })
       end
     end
 
