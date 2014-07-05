@@ -19,7 +19,7 @@
 #
 
 require_relative '../spec_helper'
-require_relative '../../libraries/resource/shipyard_agent'
+require_relative '../../libraries/resource_shipyard_agent'
 
 describe Chef::Resource::ShipyardAgent do
   [:host, :key, :install_type, :version].each do |i|

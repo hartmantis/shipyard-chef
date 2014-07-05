@@ -26,7 +26,7 @@ require 'chef/resource/template'
 require 'fileutils'
 require 'mixlib/shellout'
 require 'uri'
-require_relative '../shipyard_agent'
+require_relative 'resource_shipyard_agent'
 
 class Chef
   class Provider
