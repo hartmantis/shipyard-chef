@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Spec:: resource/shipyard_agent
+# Spec:: libraries/resource_shipyard_agent
 #
 # Copyright (C) 2014, Jonathan Hartman
 #
