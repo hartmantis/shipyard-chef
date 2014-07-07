@@ -51,7 +51,7 @@ class Chef
         #
         # @return [String]
         #
-        def installed_version?
+        def installed_version
           shout = Mixlib::ShellOut.new("#{deploy_dir}/#{asset_file} --version")
           shout.run_command.stdout.strip
         end
