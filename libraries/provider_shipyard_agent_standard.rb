@@ -166,16 +166,6 @@ class Chef
         end
 
         #
-        # The filename for the GitHub asset
-        #
-        # @return [String]
-        #
-        def asset_file
-          # TODO: Don't hard code this here
-          'shipyard-agent'
-        end
-
-        #
         # Translate the 'version' of the resource to a GitHub release string
         #
         # @return [String]
@@ -206,6 +196,16 @@ class Chef
         #
         def deploy_dir
           '/usr/bin'
+        end
+
+        #
+        # The filename for the GitHub asset
+        #
+        # @return [String]
+        #
+        def asset_file
+          # TODO: Don't hard code this here
+          'shipyard-agent'
         end
       end
     end
