@@ -87,6 +87,34 @@ describe Chef::Provider::ShipyardAgent::Standard do
     end
   end
 
+  [:enable, :disable, :start, :stop].each do |action|
+    describe "#action_#{action}" do
+      let(:service) { double(run_action: true) }
+
+      before(:each) do
+        allow_any_instance_of(described_class).to receive(:service)
+          .and_return(service)
+      end
+
+      it "#{action}s the service" do
+        expect(service).to receive(:run_action).with(action)
+        provider.send(:"action_#{action}")
+      end
+    end
+  end
+
+  describe '#service' do
+    let(:service) { double }
+
+    before(:each) do
+      allow(Chef::Resource::Service).to receive(:new).and_return(service)
+    end
+
+    it 'returns an instance of Chef::Resource::Service' do
+      expect(provider.send(:service).class).to eq(RSpec::Mocks::Double)
+    end
+  end
+
   describe '#conf_file' do
     let(:template) { double(cookbook: true, source: true, variables: true) }
 

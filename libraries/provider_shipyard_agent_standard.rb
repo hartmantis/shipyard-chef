@@ -88,7 +88,44 @@ class Chef
           end
         end
 
+        #
+        # Enable the agent service
+        #
+        def action_enable
+          service.run_action(:enable)
+        end
+
+        #
+        # Disable the agent service
+        #
+        def action_disable
+          service.run_action(:disable)
+        end
+
+        #
+        # Start the agent service
+        #
+        def action_start
+          service.run_action(:start)
+        end
+
+        #
+        # Stop the agent service
+        #
+        def action_stop
+          service.run_action(:stop)
+        end
+
         private
+
+        #
+        # The agent service
+        #
+        # @return [Chef::Resource::Service]
+        #
+        def service
+          @service ||= Chef::Resource::Service.new(asset_file, run_context)
+        end
 
         #
         # The agent config file
