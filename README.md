@@ -3,8 +3,8 @@ Shipyard Cookbook
 [![Cookbook Version](http://img.shields.io/cookbook/v/shipyard.svg)][cookbook]
 [![Build Status](http://img.shields.io/travis/RoboticCheese/shipyard-chef.svg)][travis]
 
-[cookbook]: https://community.opscode.com/cookbooks/clamav
-[travis]: http://travis-ci.org/RoboticCheese/clamav-chef
+[cookbook]: https://supermarket.getchef.com/cookbooks/shipyard
+[travis]: http://travis-ci.org/RoboticCheese/shipyard-chef
 
 A Chef cookbook for the Shipyard container manager for Docker
 
