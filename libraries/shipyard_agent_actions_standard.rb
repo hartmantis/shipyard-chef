@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Provider:: shipyard_agent
+# Library:: shipyard_agent_actions_standard
 #
 # Copyright 2014, Jonathan Hartman
 #
@@ -18,55 +18,31 @@
 # limitations under the License.
 #
 
-require 'chef/provider'
 require 'chef/resource/chef_gem'
 require 'chef/resource/directory'
 require 'chef/resource/remote_file'
+require 'chef/resource/service'
 require 'chef/resource/template'
-require 'fileutils'
 require 'mixlib/shellout'
-require 'uri'
-require_relative 'resource_shipyard_agent'
 
-class Chef
-  class Provider
-    class ShipyardAgent < Provider
-      # A Chef provider for a standard (GitHub) Shipyard agent install
+module Shipyard
+  module Agent
+    module Actions
+      # Helper methods for a standard agent's supported actions
       #
       # @author Jonathan Hartman <j@p4nt5.com>
-      class Standard < ShipyardAgent
-        attr_accessor :current_resource
-
-        #
-        # Check whether the Shipyard agent is installed
-        #
-        # @return [TrueClass, FalseClass]
-        #
-        def installed?
-          ::File.exist?(::File.join(deploy_dir, asset_file))
-        end
-
-        #
-        # Get the version of the agent installed
-        #
-        # @return [String]
-        #
-        def installed_version
-          shout = Mixlib::ShellOut.new("#{deploy_dir}/#{asset_file} --version")
-          shout.run_command.stdout.strip
-        end
-
+      module Standard
         #
         # Install the Shipyard agent via GitHub artifact repo
         #
         def action_install
           chef_gem.run_action(:install)
-          if current_resource.installed? && !needs_updowngrade?
-            Chef::Log.info("Skipping #{current_resource}, #{release} " \
-                           '(already installed)')
+          if current_resource.installed? && current_resource.version != new_resource.version
+            Chef::Log.info("Skipping #{current_resource}, " \
+                           "#{new_resource.version} (already installed)")
           else
-            Chef::Log.info("Installing #{current_resource}, #{release}")
-            # TODO: Create a bin/ subdir and put the script there
+            Chef::Log.info("Installing #{current_resource}, " <<
+                           current_resource.version)
             [directory, remote_file, init_script, conf_file].each do |r|
               r.run_action(:create)
             end
@@ -74,13 +50,13 @@ class Chef
         end
 
         #
-        # Delete the Shipyard agent's deployed files
+        # Uninstall the Shipyard agent
         #
         def action_uninstall
           if current_resource.installed?
             Chef::Log.info("Uninstalling #{current_resource}")
-            [conf_file, init_script, remote_file].each do |f|
-              f.run_action(:delete)
+            [conf_file, init_script, remote_file].each do |r|
+              r.run_action(:delete)
             end
             directory.run_action(:delete) if ::Dir.new(deploy_dir).count == 2
           else
@@ -88,32 +64,16 @@ class Chef
           end
         end
 
+        [:enable, :disable, :start, :stop].each do |action|
+          define_method(:"action_#{action}",
+                        proc { service.run_action(action) })
+        end
+
         #
         # Enable the agent service
         #
         def action_enable
           service.run_action(:enable)
-        end
-
-        #
-        # Disable the agent service
-        #
-        def action_disable
-          service.run_action(:disable)
-        end
-
-        #
-        # Start the agent service
-        #
-        def action_start
-          service.run_action(:start)
-        end
-
-        #
-        # Stop the agent service
-        #
-        def action_stop
-          service.run_action(:stop)
         end
 
         private
@@ -132,7 +92,6 @@ class Chef
         #
         # @return [Chef::Resource::Template]
         #
-        # TODO: Make the conf file its own Chef resource/provider
         def conf_file
           @conf_file ||= Chef::Resource::Template.new(
             ::File.join('/etc/default', "#{asset_file}.conf"), run_context
@@ -145,11 +104,10 @@ class Chef
         end
 
         #
-        # The init script file (Upstart only)
+        # The agent init script file (Upstart only)
         #
         # @return [Chef::Resource::Template]
         #
-        # TODO: Make the init file its own Chef resource/provider
         def init_script
           @init_script ||= Chef::Resource::Template.new(
             ::File.join('/etc/init', asset_file), run_context
@@ -160,7 +118,7 @@ class Chef
         end
 
         #
-        # The RemoteFile resource for the deployed artifact
+        # The agent application itself
         #
         # @return [Chef::Resource::RemoteFile]
         #

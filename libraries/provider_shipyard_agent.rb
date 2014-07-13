@@ -20,6 +20,7 @@
 
 require 'chef/provider'
 require_relative 'resource_shipyard_agent'
+require_relative 'shipyard_agent_service_standard'
 
 class Chef
   class Provider
@@ -27,6 +28,21 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class ShipyardAgent < Provider
+      #
+      # Pull in the correct install type-dependent methods
+      #
+      def initialize(new_resource, run_context)
+        case new_resource.install_type
+        when :standard
+          include Shipyard::Agent::Service::Standard
+          include Shipyard::Agent::State::Standard
+          include Shipyard::Agent::Actions::Standard
+        else
+          fail NotImplemented, new_resource.install_type
+        end
+        super
+      end
+
       #
       # WhyRun is supported by this provider
       #
@@ -53,15 +69,12 @@ class Chef
         @current_resource
       end
 
-      #
-      # Restart the Shipyard agent
-      #
-      def action_restart
-        action_stop && action_start
+      [:enable, :disable, :start, :stop, :restart].each do |action|
+        define_method(:"action_#{action}", proc { service.run_action(action) })
       end
 
       # Each implementation of the provider needs to define certain actions...
-      [:install, :uninstall, :enable, :disable, :start, :stop].each do |act|
+      [:install, :uninstall].each do |act|
         define_method(:"action_#{act}", proc { fail(NotImplemented, act) })
       end
 
@@ -80,8 +93,8 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class NotImplemented < StandardError
-      def initialize(method)
-        super("Method `#{method}` has not been implemented")
+      def initialize(item)
+        super("`#{item}` has not been implemented")
       end
     end
   end

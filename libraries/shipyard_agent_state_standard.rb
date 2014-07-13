@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Provider:: shipyard_agent
+# Library:: shipyard_agent_state_standard
 #
 # Copyright 2014, Jonathan Hartman
 #
@@ -18,20 +18,32 @@
 # limitations under the License.
 #
 
-require 'chef/provider'
-require_relative 'resource_shipyard_agent'
+require 'mixlib/shellout'
 
-class Chef
-  class Provider
-    class ShipyardAgent < Provider
-      # A Chef provider for a container-based Shipyard agent install
+module Shipyard
+  module Agent
+    module State
+      # Helper methods for a standard agent's state information
       #
       # @author Jonathan Hartman <j@p4nt5.com>
-      class Container < ShipyardAgent
+      module Standard
         #
-        # Install the Shipyard agent via Docker container
+        # Check whether the Shipyard agent is installed
         #
-        def action_install
+        # @return [TrueClass, FalseClass]
+        #
+        def installed?
+          ::File.exist?(::File.join(deploy_dir, asset_file))
+        end
+
+        #
+        # Get the version of the agent installed
+        #
+        # @return [String]
+        #
+        def installed_version
+          shout = Mixlib::ShellOut.new("#{deploy_dir}/#{asset_file} --version")
+          shout.run_command.stdout.strip
         end
       end
     end
