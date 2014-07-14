@@ -18,11 +18,8 @@
 # limitations under the License.
 #
 
-shipyard_agent 'local_agent' do
+shipyard_agent_application 'local_agent' do
   install_type node['shipyard']['agent']['install_type']
   version node['shipyard']['agent']['version']
-  host node['shipyard']['agent']['host']
-  key node['shipyard']['agent']['key']
   action :install
-  # action :uninstall
 end
