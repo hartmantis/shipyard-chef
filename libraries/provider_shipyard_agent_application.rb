@@ -52,9 +52,11 @@ class Chef
       end
 
       # Each implementation of the provider needs to define certain actions
-      [:create, :delete, :install, :uninstall].each do |act|
+      [:create, :delete].each do |act|
         define_method(:"action_#{act}", proc { fail(NotImplemented, act) })
       end
+      alias_method :install, :create
+      alias_method :uninstall, :delete
 
       # ...and certain statuses...
       [:installed?, :version].each do |status|
