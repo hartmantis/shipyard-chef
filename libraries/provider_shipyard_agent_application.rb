@@ -27,6 +27,9 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class ShipyardAgentApplication < Provider
+      alias_method :action_install, :action_create
+      alias_method :action_uninstall, :action_delete
+
       #
       # WhyRun is supported by this provider
       #
@@ -55,9 +58,6 @@ class Chef
       [:create, :delete].each do |act|
         define_method(:"action_#{act}", proc { fail(NotImplemented, act) })
       end
-      alias_method :install, :create
-      alias_method :uninstall, :delete
-
       # ...and certain statuses...
       [:installed?, :version].each do |status|
         define_method(status, proc { fail(NotImplemented, status) })
