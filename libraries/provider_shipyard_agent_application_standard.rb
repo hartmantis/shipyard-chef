@@ -37,11 +37,13 @@ class Chef
           octokit.run_action(:install)
           app_dir.run_action(:create)
           app_file.run_action(:create)
+          new_resource.created = true
         end
 
         def action_delete
           app_file.run_action(:delete)
           app_dir.run_action(:delete) if ::Dir.new(deploy_dir).count == 2
+          new_resource.created = false
         end
 
         def installed?

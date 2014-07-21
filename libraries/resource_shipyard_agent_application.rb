@@ -28,6 +28,8 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class ShipyardAgentApplication < Resource
+      attr_accessor :created
+
       def initialize(name, run_context = nil)
         super
         @resource_name = :shipyard_agent_application
