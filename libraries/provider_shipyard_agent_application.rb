@@ -54,13 +54,14 @@ class Chef
         @current_resource
       end
 
-      # Each implementation of the provider needs to define certain actions
-      [:create, :delete].each do |act|
-        define_method(:"action_#{act}", proc { fail(NotImplemented, act) })
-      end
-      # ...and certain statuses...
-      [:installed?, :version].each do |status|
-        define_method(status, proc { fail(NotImplemented, status) })
+      # Each implementation of the provider needs to define certain methods
+      [
+        :action_create,
+        :action_delete,
+        :installed?,
+        :version
+      ].each do |method|
+        define_method(method, proc { fail(NotImplemented, act) })
       end
     end
 
@@ -69,7 +70,7 @@ class Chef
     # @author Jonathan Hartman <j@p4nt5.com>
     class NotImplemented < StandardError
       def initialize(item)
-        super("`#{item}` has not been implemented")
+        super("Method `#{item}` has not been implemented")
       end
     end
   end
