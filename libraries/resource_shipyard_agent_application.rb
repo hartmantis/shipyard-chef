@@ -21,6 +21,7 @@
 require 'chef/resource'
 require 'chef/mixin/params_validate'
 require_relative 'provider_shipyard_agent_application'
+require_relative 'provider_shipyard_agent_application_standard'
 
 class Chef
   class Resource
@@ -28,12 +29,14 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class ShipyardAgentApplication < Resource
+      DEFAULT_IMAGE = 'shipyard/agent'
+
       attr_accessor :created
 
       def initialize(name, run_context = nil)
         super
         @resource_name = :shipyard_agent_application
-        @provider = Provider::ShipyardAgent::Application
+        @provider = Provider::ShipyardAgent::Application::Standard
         @action = :create
         @allowed_actions = [:create, :delete, :install, :uninstall]
 
@@ -44,7 +47,7 @@ class Chef
       #
       # The install type for the agent--standard (GitHub) or container
       #
-      # @param [Symbol, String] arg
+      # @param [Symbol, String, NilClass] arg
       # @return [Symbol]
       #
       def install_type(arg = nil)
@@ -59,11 +62,40 @@ class Chef
       #
       # The source to pull in the Shipyard application from
       #
-      # @param [String] arg
-      # @return [String]
+      # @param [String, NilClass] arg
+      # @return [String, NilClass]
       #
       def source(arg = nil)
-        set_or_return(:source, arg, kind_of: String)
+        set_or_return(:source, arg, kind_of: [String, NilClass], default: nil)
+      end
+
+      #
+      # The Docker image to download for a container-based install
+      #
+      # @param [String, NilClass]
+      # @return [String, NilClass]
+      #
+      def docker_image(arg = nil)
+        set_or_return(:docker_image,
+                      arg,
+                      kind_of: [String, NilClass],
+                      default: install_type == :container ? DEFAULT_IMAGE : nil,
+                      callbacks: {
+                        'A `docker_image` requires a container-based install' =>
+                          ->(_) { install_type != :container },
+                        'A `docker_image` cannot be used with a `source`' =>
+                          ->(_) { !source.nil? }
+                      })
+      end
+
+      #
+      # The version of the agent to install
+      #
+      # @param [String, NilClass]
+      # @return [String, NilClass]
+      #
+      def version(arg = nil)
+        set_or_return(:version, arg, kind_of: String, default: 'latest')
       end
     end
   end
