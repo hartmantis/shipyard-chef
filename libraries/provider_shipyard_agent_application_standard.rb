@@ -51,6 +51,7 @@ class Chef
         end
 
         def version
+          return nil unless installed?
           shout = Mixlib::ShellOut.new("#{deploy_dir}/#{app_name} --version")
           shout.run_command.stdout.strip
         end
