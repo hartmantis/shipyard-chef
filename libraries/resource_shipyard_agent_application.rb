@@ -21,6 +21,7 @@
 require 'chef/resource'
 require 'chef/mixin/params_validate'
 require_relative 'provider_shipyard_agent_application'
+require_relative 'provider_shipyard_agent_application_container'
 require_relative 'provider_shipyard_agent_application_standard'
 
 class Chef
@@ -36,7 +37,7 @@ class Chef
       def initialize(name, run_context = nil)
         super
         @resource_name = :shipyard_agent_application
-        @provider = Provider::ShipyardAgent::Application::Standard
+        @provider = Provider::ShipyardAgentApplication::Standard
         @action = :create
         @allowed_actions = [:create, :delete, :install, :uninstall]
 
@@ -51,9 +52,8 @@ class Chef
       # @return [Symbol]
       #
       def install_type(arg = nil)
-        arg = arg.to_sym if arg
         set_or_return(:install_type,
-                      arg,
+                      arg.nil? ? arg : arg.to_sym,
                       kind_of: Symbol,
                       equal_to: [:standard, :container],
                       default: :standard)
@@ -82,9 +82,9 @@ class Chef
                       default: install_type == :container ? DEFAULT_IMAGE : nil,
                       callbacks: {
                         'A `docker_image` requires a container-based install' =>
-                          ->(_) { install_type != :container },
+                          ->(a) { a.nil? ? true : install_type == :container },
                         'A `docker_image` cannot be used with a `source`' =>
-                          ->(_) { !source.nil? }
+                          ->(a) { a.nil? ? true : source.nil? }
                       })
       end
 
