@@ -111,7 +111,7 @@ describe Chef::Provider::ShipyardAgent::Standard do
     end
 
     it 'returns an instance of Chef::Resource::Service' do
-      expect(provider.send(:service).class).to eq(RSpec::Mocks::Double)
+      expect(provider.send(:service)).to be_an_instance_of(RSpec::Mocks::Double)
     end
   end
 
@@ -123,7 +123,8 @@ describe Chef::Provider::ShipyardAgent::Standard do
     end
 
     it 'returns an instance of Chef::Resource::Template' do
-      expect(provider.send(:init_script).class).to eq(RSpec::Mocks::Double)
+      expected = RSpec::Mocks::Double
+      expect(provider.send(:init_script)).to be_an_instance_of(expected)
     end
   end
 
@@ -135,7 +136,8 @@ describe Chef::Provider::ShipyardAgent::Standard do
     end
 
     it 'returns an instance of Chef::Resource::Template' do
-      expect(provider.send(:init_script).class).to eq(RSpec::Mocks::Double)
+      expected = RSpec::Mocks::Double
+      expect(provider.send(:init_script)).to be_an_instance_of(expected)
     end
   end
 
@@ -153,7 +155,8 @@ describe Chef::Provider::ShipyardAgent::Standard do
     end
 
     it 'returns an instance of Chef::Resource::RemoteFile' do
-      expect(provider.send(:remote_file).class).to eq(RSpec::Mocks::Double)
+      expected = RSpec::Mocks::Double
+      expect(provider.send(:remote_file)).to be_an_instance_of(expected)
     end
   end
 
@@ -165,7 +168,8 @@ describe Chef::Provider::ShipyardAgent::Standard do
     end
 
     it 'returns an instance of Chef::Resource::Directory' do
-      expect(provider.send(:directory).class).to eq(RSpec::Mocks::Double)
+      expected = RSpec::Mocks::Double
+      expect(provider.send(:directory)).to be_an_instance_of(expected)
     end
   end
 
@@ -177,7 +181,8 @@ describe Chef::Provider::ShipyardAgent::Standard do
     end
 
     it 'returns an instance of Chef::Resource::ChefGem' do
-      expect(provider.send(:chef_gem).class).to eq(RSpec::Mocks::Double)
+      expected = RSpec::Mocks::Double
+      expect(provider.send(:chef_gem)).to be_an_instance_of(expected)
     end
   end
 

@@ -61,7 +61,7 @@ describe Chef::Provider::ShipyardAgent do
 
     it 'returns an instance of Chef::Resource::ShipyardAgent' do
       expected = RSpec::Mocks::Double
-      expect(provider.load_current_resource.class).to eq(expected)
+      expect(provider.load_current_resource).to be_an_instance_of(expected)
     end
   end
 
