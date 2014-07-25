@@ -27,9 +27,6 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class ShipyardAgentApplication < Provider
-      alias_method :action_install, :action_create
-      alias_method :action_uninstall, :action_delete
-
       #
       # WhyRun is supported by this provider
       #
@@ -63,6 +60,8 @@ class Chef
       ].each do |method|
         define_method(method, proc { fail(NotImplemented, act) })
       end
+      alias_method :action_install, :action_create
+      alias_method :action_uninstall, :action_delete
     end
 
     # A custom exception class for not implemented methods

@@ -42,7 +42,6 @@ class Chef
         end
 
         def version
-          return nil unless installed?
           current_image.tag
         end
 

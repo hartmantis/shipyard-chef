@@ -22,6 +22,8 @@ require 'chef'
 require 'chefspec'
 require 'tmpdir'
 require 'fileutils'
+require_relative 'support/provider/docker_image'
+require_relative 'support/resource/docker_image'
 
 RSpec.configure do |c|
   c.color = true
