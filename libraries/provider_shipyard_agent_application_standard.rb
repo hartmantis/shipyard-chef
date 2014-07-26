@@ -23,6 +23,7 @@ require 'chef/resource/chef_gem'
 require 'chef/resource/directory'
 require 'chef/resource/remote_file'
 require 'mixlib/shellout'
+require 'uri'
 require_relative 'resource_shipyard_agent_application'
 require_relative 'provider_shipyard_agent_application'
 

@@ -161,4 +161,116 @@ describe Chef::Provider::ShipyardAgentApplication::Standard do
       end
     end
   end
+
+  describe '#app_file' do
+    let(:deploy_dir) { '/opt/ship' }
+    let(:app_name) { 'yard' }
+    let(:asset_url) { URI('http://example.com/ship') }
+
+    before(:each) do
+      {
+        deploy_dir: deploy_dir, app_name: app_name, asset_url: asset_url
+      }.each do |k, v|
+        allow_any_instance_of(described_class).to receive(k).and_return(v)
+      end
+    end
+
+    it 'returns a RemoteFile instance' do
+      expected = Chef::Resource::RemoteFile
+      expect(provider.send(:app_file)).to be_an_instance_of(expected)
+    end
+
+    it 'uses the agent application directory' do
+      expect(provider.send(:app_file).name).to eq("#{deploy_dir}/#{app_name}")
+    end
+
+    it 'makes the file executable' do
+      expect(provider.send(:app_file).mode).to eq('0755')
+    end
+
+    it 'uses the correct GitHub URL' do
+      expect(provider.send(:app_file).source).to eq([asset_url.to_s])
+    end
+  end
+
+  describe '#app_dir' do
+    before(:each) do
+      allow_any_instance_of(described_class).to receive(:deploy_dir)
+        .and_return('/opt/ship')
+    end
+
+    it 'returns a Directory instance' do
+      expected = Chef::Resource::Directory
+      expect(provider.send(:app_dir)).to be_an_instance_of(expected)
+    end
+
+    it 'uses the agent application directory' do
+      expect(provider.send(:app_dir).name).to eq('/opt/ship')
+    end
+  end
+
+  describe '#asset_url' do
+    before(:each) do
+      { repo: 'ship/yard', release: 'v1.2.3', app_name: 'yarr' }.each do |k, v|
+        allow_any_instance_of(described_class).to receive(k).and_return(v)
+      end
+
+      it 'returns the correct GitHub asset URL' do
+        expected = URI('https://github.com/ship/yard/releases/download/' \
+                       'v1.2.3/yarr')
+        expect(provider.send(:asset_url)).to eq(expected)
+      end
+    end
+  end
+
+  describe '#release' do
+    context 'the "latest" version' do
+      before(:each) do
+        require 'octokit'
+        allow(Octokit).to receive(:releases).with('shipyard/shipyard-agent')
+          .and_return([{ tag_name: 'v2.0.0' }, { tag_name: 'v1.2.3' }])
+      end
+
+      it 'returns the most recent GitHub tag' do
+        expect(provider.send(:release)).to eq('v2.0.0')
+      end
+    end
+
+    context 'an overridden specific version' do
+      let(:new_resource_version) { '1.2.3' }
+
+      it 'returns the GitHub tag for that version' do
+        expect(provider.send(:release)).to eq('v1.2.3')
+      end
+    end
+  end
+
+  describe '#octokit' do
+    it 'returns a ChefGem resource' do
+      expected = Chef::Resource::ChefGem
+      expect(provider.send(:octokit)).to be_an_instance_of(expected)
+    end
+
+    it 'returns the Octokit Gem' do
+      expect(provider.send(:octokit).name).to eq('octokit')
+    end
+  end
+
+  describe '#repo' do
+    it 'returns "shipyard/shipyard-agent"' do
+      expect(provider.send(:repo)).to eq('shipyard/shipyard-agent')
+    end
+  end
+
+  describe '#deploy_dir' do
+    it 'returns "/usr/bin"' do
+      expect(provider.send(:deploy_dir)).to eq('/usr/bin')
+    end
+  end
+
+  describe '#app_name' do
+    it 'returns "shipyard-agent"' do
+      expect(provider.send(:app_name)).to eq('shipyard-agent')
+    end
+  end
 end
