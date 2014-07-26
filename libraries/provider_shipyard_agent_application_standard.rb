@@ -35,6 +35,7 @@ class Chef
       class Standard < ShipyardAgentApplication
         def action_create
           octokit.run_action(:install)
+          app_dir.recursive(true)
           app_dir.run_action(:create)
           app_file.run_action(:create)
           new_resource.created = true
@@ -42,7 +43,8 @@ class Chef
 
         def action_delete
           app_file.run_action(:delete)
-          app_dir.run_action(:delete) if ::Dir.new(deploy_dir).count == 2
+          app_dir.only_if(->() { ::Dir.new(deploy_dir).count == 2 })
+          app_dir.run_action(:delete)
           new_resource.created = false
         end
 
@@ -79,8 +81,6 @@ class Chef
         #
         def app_dir
           @app_dir ||= Chef::Resource::Directory.new(deploy_dir, run_context)
-          @app_dir.recursive(true)
-          @app_dir
         end
 
         #
