@@ -24,6 +24,7 @@ require 'chef/resource/directory'
 require 'chef/resource/remote_file'
 require 'mixlib/shellout'
 require 'uri'
+require_relative 'shipyard_agent_helpers'
 require_relative 'resource_shipyard_agent_application'
 require_relative 'provider_shipyard_agent_application'
 
@@ -34,6 +35,8 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Standard < ShipyardAgentApplication
+        include Shipyard::Agent::Helpers
+
         def action_create
           octokit.run_action(:install)
           app_dir.recursive(true)
@@ -134,15 +137,6 @@ class Chef
         #
         def deploy_dir
           '/usr/bin'
-        end
-
-        #
-        # The name of the agent application in GitHub repos, filenames, etc.
-        #
-        # @return [String]
-        #
-        def app_name
-          'shipyard-agent'
         end
       end
     end
