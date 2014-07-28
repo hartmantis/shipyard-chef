@@ -58,7 +58,7 @@ class Chef
         :installed?,
         :version
       ].each do |method|
-        define_method(method, proc { fail(NotImplemented, act) })
+        define_method(method, proc { fail(NotImplemented, method) })
       end
       alias_method :action_install, :action_create
       alias_method :action_uninstall, :action_delete
