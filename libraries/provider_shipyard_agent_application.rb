@@ -39,10 +39,10 @@ class Chef
       #
       # Load and return the current resource
       #
-      # @return [Chef::Resource::ShipyardAgent]
+      # @return [Chef::Resource::ShipyardAgentApplication]
       #
       def load_current_resource
-        @current_resource ||= Resource::ShipyardAgent::Application.new(
+        @current_resource ||= Resource::ShipyardAgentApplication.new(
           new_resource.name
         )
         @current_resource.install_type(new_resource.install_type)
