@@ -114,16 +114,16 @@ describe Chef::Resource::ShipyardAgentConfig do
     end
 
     context 'no override provided' do
-      it 'defaults to "/etc/shipyard-agent"' do
-        expect(resource.path).to eq('/etc/shipyard-agent')
+      it 'defaults to "/etc/default/shipyard-agent"' do
+        expect(resource.path).to eq('/etc/default/shipyard-agent')
       end
     end
 
     context 'a valid override provided' do
-      let(:override) { '/opt/shipyard' }
+      let(:override) { '/opt/shipyard.conf' }
 
       it 'returns the override' do
-        expect(resource.path).to eq('/opt/shipyard')
+        expect(resource.path).to eq('/opt/shipyard.conf')
       end
     end
 

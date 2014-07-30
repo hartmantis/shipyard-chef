@@ -74,7 +74,7 @@ class Chef
       end
 
       #
-      # The directory in which to place agent configs
+      # The intended path to the config file
       #
       # @param [String, NilClass] arg
       # @return [String]
@@ -83,7 +83,7 @@ class Chef
         set_or_return(:path,
                       arg,
                       kind_of: String,
-                      default: ::File.join('/etc', app_name))
+                      default: ::File.join('/etc/default', app_name))
       end
     end
   end
