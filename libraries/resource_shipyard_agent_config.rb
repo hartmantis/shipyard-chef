@@ -85,6 +85,32 @@ class Chef
                       kind_of: String,
                       default: ::File.join('/etc/default', app_name))
       end
+
+      #
+      # The URL to the Shipyard host
+      #
+      # @param [String, NilClass] arg
+      # @return [String]
+      #
+      def url(arg = nil)
+        set_or_return(:url,
+                      arg,
+                      kind_of: String,
+                      default: 'http://localhost:8000')
+      end
+
+      #
+      # The key for access to the Shipyard host
+      #
+      # @param [String, NilClass] arg
+      # @return [String, NilClass]
+      #
+      def key(arg = nil)
+        set_or_return(:key,
+                      arg,
+                      kind_of: [String, NilClass],
+                      default: nil)
+      end
     end
   end
 end

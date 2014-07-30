@@ -135,4 +135,66 @@ describe Chef::Resource::ShipyardAgentConfig do
       end
     end
   end
+
+  describe '#url' do
+    let(:override) { nil }
+    let(:resource) do
+      r = super()
+      r.url(override)
+      r
+    end
+
+    context 'no override provided' do
+      it 'defaults to "http://localhost:8000"' do
+        expect(resource.url).to eq('http://localhost:8000')
+      end
+    end
+
+    context 'a valid override provided' do
+      let(:override) { 'http://1.2.3.4' }
+
+      it 'returns the override' do
+        expect(resource.url).to eq('http://1.2.3.4')
+      end
+    end
+
+    context 'an invalid override provided' do
+      let(:override) { :badbadbad }
+
+      it 'raises an exception' do
+        expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+      end
+    end
+  end
+
+  describe '#key' do
+    let(:override) { nil }
+    let(:resource) do
+      r = super()
+      r.key(override)
+      r
+    end
+
+    context 'no override provided' do
+      it 'defaults to nil' do
+        expect(resource.key).to eq(nil)
+      end
+    end
+
+    context 'a valid override provided' do
+      let(:override) { '1234' }
+
+      it 'returns the override' do
+        expect(resource.key).to eq('1234')
+      end
+    end
+
+    context 'an invalid override provided' do
+      let(:override) { :badbadbad }
+
+      it 'raises an exception' do
+        expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+      end
+    end
+  end
 end
