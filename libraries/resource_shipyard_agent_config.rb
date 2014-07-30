@@ -72,6 +72,19 @@ class Chef
                       kind_of: String,
                       default: "#{app_name}.default.erb")
       end
+
+      #
+      # The directory in which to place agent configs
+      #
+      # @param [String, NilClass] arg
+      # @return [String]
+      #
+      def path(arg = nil)
+        set_or_return(:path,
+                      arg,
+                      kind_of: String,
+                      default: ::File.join('/etc', app_name))
+      end
     end
   end
 end

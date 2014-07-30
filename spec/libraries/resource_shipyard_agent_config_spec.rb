@@ -104,4 +104,35 @@ describe Chef::Resource::ShipyardAgentConfig do
       end
     end
   end
+
+  describe '#path' do
+    let(:override) { nil }
+    let(:resource) do
+      r = super()
+      r.path(override)
+      r
+    end
+
+    context 'no override provided' do
+      it 'defaults to "/etc/shipyard-agent"' do
+        expect(resource.path).to eq('/etc/shipyard-agent')
+      end
+    end
+
+    context 'a valid override provided' do
+      let(:override) { '/opt/shipyard' }
+
+      it 'returns the override' do
+        expect(resource.path).to eq('/opt/shipyard')
+      end
+    end
+
+    context 'an invalid override provided' do
+      let(:override) { :badbadbad }
+
+      it 'raises an exception' do
+        expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+      end
+    end
+  end
 end
