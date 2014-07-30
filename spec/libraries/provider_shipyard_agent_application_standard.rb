@@ -85,6 +85,7 @@ describe Chef::Provider::ShipyardAgentApplication::Standard do
     end
 
     it 'removes the application dir if empty' do
+      expect(app_dir).to receive(:only_if)
       expect(app_dir).to receive(:run_action).with(:delete)
       provider.action_delete
     end

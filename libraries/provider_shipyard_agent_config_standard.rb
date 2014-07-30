@@ -19,7 +19,10 @@
 #
 
 require 'chef/provider'
+require 'chef/resource/directory'
+require 'chef/resource/template'
 require_relative 'resource_shipyard_agent_config'
+require_relative 'provider_shipyard_agent_config'
 
 class Chef
   class Provider
@@ -28,6 +31,43 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Standard < ShipyardAgentConfig
+        def action_create
+          conf_dir.recursive(true)
+          conf_dir.run_action(:create)
+          conf_file.run_action(:create)
+          new_resource.created = true
+        end
+
+        def action_delete
+          conf_file.run_action(:delete)
+          conf_dir.only_if(->() { ::Dir.new(something).count == 2 })
+          conf_dir.run_action(:delete)
+          new_resource.created = false
+        end
+
+        def created?
+          ::File.exist?(new_resource.path)
+        end
+
+        private
+
+        def conf_file
+          @conf_file ||= Chef::Resource::Template.new(
+            new_resource.path, nil
+          )
+          @conf_file.source(new_resource.source)
+          @conf_file.variables(
+            url: new_resource.url,
+            key: new_resource.key
+          )
+          @conf_file
+        end
+
+        def conf_dir
+          @conf_dir ||= Chef::Resource::Directory.new(
+            ::File.dirname(new_resource.path), nil
+          )
+        end
       end
     end
   end
