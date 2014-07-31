@@ -1,15 +1,15 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Provider:: shipyard_agent_config_container
+# Spec:: libraries/provider_shipyard_agent_service_container
 #
-# Copyright 2014, Jonathan Hartman
+# Copyright (C) 2014, Jonathan Hartman
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#   http://www.apache.org/licenses/LICENSE-2.0
+#    http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,18 +18,18 @@
 # limitations under the License.
 #
 
-require 'chef/provider'
-require_relative 'resource_shipyard_agent_config'
-require_relative 'provider_shipyard_agent_config'
+require_relative '../spec_helper'
+require_relative '../../libraries/provider_shipyard_agent_service_container'
 
-class Chef
-  class Provider
-    class ShipyardAgentConfig < Provider
-      # A Chef provider for a container-based Shipard agent configuration
-      #
-      # @author Jonathan Hartman <j@p4nt5.com>
-      class Container < ShipyardAgentConfig
-      end
-    end
+describe Chef::Provider::ShipyardAgentService::Container do
+  let(:new_resource) do
+    double(name: 'my_agent',
+           install_type: 'test',
+           :'created=' => true)
+  end
+  let(:provider) { described_class.new(new_resource, nil) }
+
+  it 'does something' do
+    pending
   end
 end

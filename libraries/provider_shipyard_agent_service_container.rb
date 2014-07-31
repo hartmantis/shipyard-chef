@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Provider:: shipyard_agent_config_container
+# Provider:: shipyard_agent_service_container
 #
 # Copyright 2014, Jonathan Hartman
 #
@@ -19,16 +19,16 @@
 #
 
 require 'chef/provider'
-require_relative 'resource_shipyard_agent_config'
-require_relative 'provider_shipyard_agent_config'
+require_relative 'resource_shipyard_agent_service'
+require_relative 'provider_shipyard_agent_service'
 
 class Chef
   class Provider
-    class ShipyardAgentConfig < Provider
-      # A Chef provider for a container-based Shipard agent configuration
+    class ShipyardAgentService < Provider
+      # A Chef provider for a container-based Shipard agent service
       #
       # @author Jonathan Hartman <j@p4nt5.com>
-      class Container < ShipyardAgentConfig
+      class Container < ShipyardAgentService
       end
     end
   end
