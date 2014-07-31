@@ -61,6 +61,19 @@ class Chef
       end
 
       #
+      # The cookbook to pull the config template from
+      #
+      # @param [String, NilClass] arg
+      # @return [String, NilClass]
+      #
+      def cookbook(arg = nil)
+        set_or_return(:cookbook,
+                      arg,
+                      kind_of: [String, NilClass],
+                      default: nil)
+      end
+
+      #
       # The source for the config file template
       #
       # @param [String, NilClass] arg

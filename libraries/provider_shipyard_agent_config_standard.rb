@@ -53,8 +53,9 @@ class Chef
 
         def conf_file
           @conf_file ||= Chef::Resource::Template.new(
-            new_resource.path, nil
+            new_resource.path, run_context
           )
+          @conf_file.cookbook(new_resource.cookbook || cookbook_name.to_s)
           @conf_file.source(new_resource.source)
           @conf_file.variables(
             url: new_resource.url,
@@ -65,7 +66,7 @@ class Chef
 
         def conf_dir
           @conf_dir ||= Chef::Resource::Directory.new(
-            ::File.dirname(new_resource.path), nil
+            ::File.dirname(new_resource.path), run_context
           )
         end
       end

@@ -26,7 +26,7 @@ describe Chef::Provider::ShipyardAgentApplication::Standard do
   let(:new_resource) do
     double(name: 'my_agent',
            install_type: 'test',
-           :'created=' => true,
+           :'installed=' => true,
            version: new_resource_version)
   end
   let(:provider) { described_class.new(new_resource, nil) }

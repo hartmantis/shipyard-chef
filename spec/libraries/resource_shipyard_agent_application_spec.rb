@@ -43,6 +43,11 @@ describe Chef::Resource::ShipyardAgentApplication do
     it 'defaults to the "create" action' do
       expect(resource.instance_variable_get(:@action)).to eq(:create)
     end
+
+    it 'defaults the installed state to false' do
+      expect(resource.installed).to eq(false)
+      expect(resource.installed?).to eq(false)
+    end
   end
 
   describe '#install_type' do

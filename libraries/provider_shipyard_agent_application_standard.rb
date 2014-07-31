@@ -42,14 +42,14 @@ class Chef
           app_dir.recursive(true)
           app_dir.run_action(:create)
           app_file.run_action(:create)
-          new_resource.created = true
+          new_resource.installed = true
         end
 
         def action_delete
           app_file.run_action(:delete)
           app_dir.only_if(->() { ::Dir.new(deploy_dir).count == 2 })
           app_dir.run_action(:delete)
-          new_resource.created = false
+          new_resource.installed = false
         end
 
         def installed?

@@ -105,6 +105,37 @@ describe Chef::Resource::ShipyardAgentConfig do
     end
   end
 
+  describe '#cookbook' do
+    let(:override) { nil }
+    let(:resource) do
+      r = super()
+      r.cookbook(override)
+      r
+    end
+
+    context 'no override provided' do
+      it 'defaults to nil to be evaluated in the provider' do
+        expect(resource.cookbook).to eq(nil)
+      end
+    end
+
+    context 'a valid override provided' do
+      let(:override) { 'rappercookbook' }
+
+      it 'returns the override' do
+        expect(resource.cookbook).to eq('rappercookbook')
+      end
+    end
+
+    context 'an invalid override provided' do
+      let(:override) { :monkeys }
+
+      it 'raises an exception' do
+        expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+      end
+    end
+  end
+
   describe '#path' do
     let(:override) { nil }
     let(:resource) do

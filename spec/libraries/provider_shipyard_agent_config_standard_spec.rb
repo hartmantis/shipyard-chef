@@ -26,6 +26,8 @@ describe Chef::Provider::ShipyardAgentConfig::Standard do
     double(name: 'my_agent',
            install_type: :standard,
            :'created=' => true,
+           cookbook: nil,
+           cookbook_name: :shipyard,
            source: 'conf.erb',
            path: '/etc/ship.conf',
            url: 'http://1.2.3.4',
@@ -108,6 +110,10 @@ describe Chef::Provider::ShipyardAgentConfig::Standard do
     it 'returns a Template instance' do
       expected = Chef::Resource::Template
       expect(provider.send(:conf_file)).to be_an_instance_of(expected)
+    end
+
+    it 'sets the proper cookbook name' do
+      expect(provider.send(:conf_file).cookbook).to eq('shipyard')
     end
 
     it 'uses the path specified by the resource' do

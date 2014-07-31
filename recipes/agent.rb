@@ -21,5 +21,10 @@
 shipyard_agent_application 'local_agent' do
   install_type node['shipyard']['agent']['install_type']
   version node['shipyard']['agent']['version']
-  action :install
+end
+
+shipyard_agent_config 'defaults' do
+  install_type node['shipyard']['agent']['install_type']
+  url node['shipyard']['agent']['url']
+  key node['shipyard']['agent']['key']
 end

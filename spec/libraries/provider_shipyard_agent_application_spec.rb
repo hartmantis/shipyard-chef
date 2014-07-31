@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Spec:: libraries/provider_shipyard_agent_config
+# Spec:: libraries/provider_shipyard_agent_application
 #
 # Copyright (C) 2014, Jonathan Hartman
 #
@@ -19,13 +19,12 @@
 #
 
 require_relative '../spec_helper'
-require_relative '../../libraries/provider_shipyard_agent_config'
+require_relative '../../libraries/provider_shipyard_agent_application'
 
-describe Chef::Provider::ShipyardAgentConfig do
+describe Chef::Provider::ShipyardAgentApplication do
   let(:new_resource) do
     double(name: 'my_agent',
-           install_type: :standard,
-           :'created=' => true)
+           install_type: :standard)
   end
   let(:provider) { described_class.new(new_resource, nil) }
 
@@ -41,13 +40,20 @@ describe Chef::Provider::ShipyardAgentConfig do
         .and_return(true)
     end
 
-    it 'returns an instance of the config resource' do
-      expected = Chef::Resource::ShipyardAgentConfig
+    it 'returns an instance of the application resource' do
+      expected = Chef::Resource::ShipyardAgentApplication
       expect(provider.load_current_resource).to be_an_instance_of(expected)
     end
   end
 
-  [:action_create, :action_delete, :created?].each do |m|
+  [
+    :action_create,
+    :action_delete,
+    :action_install,
+    :action_uninstall,
+    :installed?,
+    :version
+  ].each do |m|
     describe "##{m}" do
       it 'raises an exception' do
         expected = Chef::Provider::NotImplemented

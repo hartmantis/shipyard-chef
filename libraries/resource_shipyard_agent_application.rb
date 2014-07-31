@@ -32,7 +32,8 @@ class Chef
     class ShipyardAgentApplication < Resource
       DEFAULT_IMAGE = 'shipyard/agent'
 
-      attr_accessor :created
+      attr_accessor :installed
+      alias_method :installed?, :installed
 
       def initialize(name, run_context = nil)
         super
@@ -42,7 +43,7 @@ class Chef
         @allowed_actions = [:create, :delete, :install, :uninstall]
 
         # State attributes set by the provider
-        @created = false
+        @installed = false
       end
 
       #
