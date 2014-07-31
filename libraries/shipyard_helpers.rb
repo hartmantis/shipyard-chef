@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Library:: shipyard_agent_helpers
+# Library:: shipyard_helpers
 #
 # Copyright 2014, Jonathan Hartman
 #
@@ -19,17 +19,28 @@
 #
 
 module Shipyard
-  module Agent
+  module Helpers
     # A set of helper methods shared by all the agent resources and providers
     #
     # @author Jonathan Hartman <j@p4nt5.com>
-    module Helpers
+    module Agent
       # The name of the agent application in GitHub repos, file names, etc.
       #
       # @return [String]
       #
       def app_name
         'shipyard-agent'
+      end
+    end
+  end
+
+  class Exceptions
+    # A custom exception class for not implemented methods
+    #
+    # @author Jonathan Hartman <j@p4nt5.com>
+    class MethodNotImplemented < NotImplementedError
+      def initialize(method)
+        super("Method '#{method}' needs to be implemented in '#{self}'")
       end
     end
   end

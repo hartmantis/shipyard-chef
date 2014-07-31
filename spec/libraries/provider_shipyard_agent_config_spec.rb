@@ -50,7 +50,7 @@ describe Chef::Provider::ShipyardAgentConfig do
   [:action_create, :action_delete, :created?].each do |m|
     describe "##{m}" do
       it 'raises an exception' do
-        expected = Chef::Provider::NotImplemented
+        expected = Shipyard::Exceptions::MethodNotImplemented
         expect { provider.send(m) }.to raise_error(expected)
       end
     end

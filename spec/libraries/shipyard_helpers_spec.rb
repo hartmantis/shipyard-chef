@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Spec:: libraries/shipyard_agent_helpers
+# Spec:: libraries/shipyard_helpers
 #
 # Copyright (C) 2014, Jonathan Hartman
 #
@@ -19,14 +19,23 @@
 #
 
 require_relative '../spec_helper'
-require_relative '../../libraries/shipyard_agent_helpers'
+require_relative '../../libraries/shipyard_helpers'
 
-describe Shipyard::Agent::Helpers do
-  let(:test_obj) { Class.new { include Shipyard::Agent::Helpers }.new }
+describe Shipyard::Helpers::Agent do
+  let(:test_obj) { Class.new { include Shipyard::Helpers::Agent }.new }
 
   describe '#app_name' do
     it 'returns "shipyard-agent"' do
       expect(test_obj.app_name).to eq('shipyard-agent')
+    end
+  end
+end
+
+describe Shipyard::Exceptions::MethodNotImplemented do
+  describe '#initialize' do
+    it 'generates a MethodNotImplemented exception' do
+      expected = "Method 'test' needs to be implemented in '#{described_class}'"
+      expect(described_class.new(:test).message).to eq(expected)
     end
   end
 end

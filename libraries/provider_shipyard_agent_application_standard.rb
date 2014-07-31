@@ -24,7 +24,7 @@ require 'chef/resource/directory'
 require 'chef/resource/remote_file'
 require 'mixlib/shellout'
 require 'uri'
-require_relative 'shipyard_agent_helpers'
+require_relative 'shipyard_helpers'
 require_relative 'resource_shipyard_agent_application'
 require_relative 'provider_shipyard_agent_application'
 
@@ -35,7 +35,7 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Standard < ShipyardAgentApplication
-        include Shipyard::Agent::Helpers
+        include Shipyard::Helpers::Agent
 
         def action_create
           octokit.run_action(:install)

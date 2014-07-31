@@ -36,8 +36,10 @@ describe Chef::Provider::ShipyardAgentApplication do
 
   describe '#load_current_resource' do
     before(:each) do
-      allow_any_instance_of(described_class).to receive(:created?)
+      allow_any_instance_of(described_class).to receive(:installed?)
         .and_return(true)
+      allow_any_instance_of(described_class).to receive(:version)
+        .and_return('1.2.3')
     end
 
     it 'returns an instance of the application resource' do
@@ -56,7 +58,7 @@ describe Chef::Provider::ShipyardAgentApplication do
   ].each do |m|
     describe "##{m}" do
       it 'raises an exception' do
-        expected = Chef::Provider::NotImplemented
+        expected = Shipyard::Exceptions::MethodNotImplemented
         expect { provider.send(m) }.to raise_error(expected)
       end
     end

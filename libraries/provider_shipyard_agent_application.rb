@@ -20,6 +20,7 @@
 
 require 'chef/provider'
 require_relative 'resource_shipyard_agent_application'
+require_relative 'shipyard_helpers'
 
 class Chef
   class Provider
@@ -57,20 +58,13 @@ class Chef
         :action_delete,
         :installed?,
         :version
-      ].each do |method|
-        define_method(method, proc { fail(NotImplemented, method) })
+      ].each do |m|
+        define_method(
+          m, proc { fail(Shipyard::Exceptions::MethodNotImplemented, m) }
+        )
       end
       alias_method :action_install, :action_create
       alias_method :action_uninstall, :action_delete
-    end
-
-    # A custom exception class for not implemented methods
-    #
-    # @author Jonathan Hartman <j@p4nt5.com>
-    class NotImplemented < StandardError
-      def initialize(item)
-        super("Method `#{item}` has not been implemented")
-      end
     end
   end
 end

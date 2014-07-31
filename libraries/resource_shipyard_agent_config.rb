@@ -20,7 +20,7 @@
 
 require 'chef/resource'
 require 'chef/mixin/params_validate'
-require_relative 'shipyard_agent_helpers'
+require_relative 'shipyard_helpers'
 require_relative 'provider_shipyard_agent_config'
 require_relative 'provider_shipyard_agent_config_container'
 require_relative 'provider_shipyard_agent_config_standard'
@@ -31,7 +31,7 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class ShipyardAgentConfig < Resource
-      include Shipyard::Agent::Helpers
+      include Shipyard::Helpers::Agent
 
       attr_accessor :created
 
