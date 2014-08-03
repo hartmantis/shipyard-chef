@@ -19,8 +19,11 @@
 #
 
 require 'chef/provider'
+require 'chef/resource/service'
+require 'chef/resource/template'
 require_relative 'resource_shipyard_agent_service'
 require_relative 'provider_shipyard_agent_service'
+require_relative 'shipyard_helpers'
 
 class Chef
   class Provider
@@ -29,6 +32,57 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Standard < ShipyardAgentService
+        include Shipyard::Helpers::Agent
+
+        def action_create
+          init_script.run_action(:create)
+        end
+
+        def action_delete
+          action_stop
+          action_disable
+          init_script.run_action(:delete)
+        end
+
+        [:enable, :disable, :start, :stop].each do |act|
+          define_method(:"action_#{act}", proc { service.run_action(act) })
+        end
+
+        def action_restart
+          action_stop
+          action_start
+        end
+
+        def created?
+          ::File.exist?(init_script.name)
+        end
+
+        private
+
+        def service
+          @service ||= Chef::Resource::Service.new(app_name, run_context)
+        end
+
+        def init_script
+          @init_script ||= Chef::Resource::Template.new(
+            ::File.join(init_dir, app_name), run_context
+          )
+          @init_script.cookbook(cookbook_name.to_s)
+          @init_script.source(::File.join(init_system.to_s,
+                                          "#{app_name}.conf.erb"))
+          @init_script
+        end
+
+        def init_dir
+          case init_system
+          when :upstart
+            '/etc/init'
+          end
+        end
+
+        def init_system
+          :upstart
+        end
       end
     end
   end
