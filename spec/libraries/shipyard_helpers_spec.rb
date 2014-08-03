@@ -34,7 +34,7 @@ end
 describe Shipyard::Exceptions::MethodNotImplemented do
   describe '#initialize' do
     it 'generates a MethodNotImplemented exception' do
-      expected = "Method 'test' needs to be implemented in '#{described_class}'"
+      expected = "Method 'test' needs to be implemented"
       expect(described_class.new(:test).message).to eq(expected)
     end
   end

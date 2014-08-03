@@ -86,14 +86,6 @@ describe Chef::Provider::ShipyardAgentService::Standard do
     end
   end
 
-  describe '#action_restart' do
-    it 'calls the stop and start actions' do
-      expect_any_instance_of(described_class).to receive(:action_stop)
-      expect_any_instance_of(described_class).to receive(:action_start)
-      provider.action_restart
-    end
-  end
-
   describe '#created?' do
     let(:exist) { nil }
 

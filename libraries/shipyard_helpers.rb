@@ -40,7 +40,7 @@ module Shipyard
     # @author Jonathan Hartman <j@p4nt5.com>
     class MethodNotImplemented < NotImplementedError
       def initialize(method)
-        super("Method '#{method}' needs to be implemented in '#{self}'")
+        super("Method '#{method}' needs to be implemented")
       end
     end
   end

@@ -58,12 +58,16 @@ class Chef
         :action_disable,
         :action_start,
         :action_stop,
-        :action_restart,
         :created?
       ].each do |m|
         define_method(
           m, proc { fail(Shipyard::Exceptions::MethodNotImplemented, m) }
         )
+      end
+
+      def action_restart
+        action_stop
+        action_start
       end
     end
   end

@@ -48,11 +48,6 @@ class Chef
           define_method(:"action_#{act}", proc { service.run_action(act) })
         end
 
-        def action_restart
-          action_stop
-          action_start
-        end
-
         def created?
           ::File.exist?(init_script.name)
         end

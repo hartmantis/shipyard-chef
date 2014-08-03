@@ -54,7 +54,6 @@ describe Chef::Provider::ShipyardAgentService do
     :action_disable,
     :action_start,
     :action_stop,
-    :action_restart,
     :created?
   ].each do |m|
     describe "##{m}" do
@@ -62,6 +61,14 @@ describe Chef::Provider::ShipyardAgentService do
         expected = Shipyard::Exceptions::MethodNotImplemented
         expect { provider.send(m) }.to raise_error(expected)
       end
+    end
+  end
+
+  describe '#action_restart' do
+    it 'stops and starts the service' do
+      expect_any_instance_of(described_class).to receive(:action_stop)
+      expect_any_instance_of(described_class).to receive(:action_start)
+      provider.action_restart
     end
   end
 end
