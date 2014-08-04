@@ -22,12 +22,13 @@ require_relative '../spec_helper'
 require_relative '../../libraries/resource_shipyard_agent_service'
 
 describe Chef::Resource::ShipyardAgentService do
-  [:install_type].each do |i|
+  [:install_type, :docker_container].each do |i|
     let(i) { nil }
   end
   let(:resource) do
     r = Chef::Resource::ShipyardAgentService.new('my_agent', nil)
     r.install_type(install_type)
+    r.docker_container(docker_container)
     r
   end
 
@@ -70,6 +71,67 @@ describe Chef::Resource::ShipyardAgentService do
 
       it 'raises an exception' do
         expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+      end
+    end
+  end
+
+  describe '#docker_container' do
+    let(:override) { nil }
+    let(:resource) do
+      r = super()
+      r.docker_container(override)
+      r
+    end
+
+    context 'no override provided' do
+      context 'a default install' do
+        it 'returns nil' do
+          expect(resource.docker_container).to eq(nil)
+        end
+      end
+
+      context 'a container-based install' do
+        let(:install_type) { :container }
+
+        it 'returns "shipyard/agent"' do
+          expect(resource.docker_container).to eq('shipyard/agent')
+        end
+      end
+
+      context 'a valid override provided' do
+        let(:override) { 'ship/yard' }
+
+        context 'a default install' do
+          it 'raises an exception' do
+            expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+          end
+        end
+
+        context 'a container-based install' do
+          let(:install_type) { :container }
+
+          it 'returns the overridden container' do
+            expect(resource.docker_container).to eq('ship/yard')
+          end
+        end
+      end
+
+      context 'an invalid override provided' do
+        let(:override) { :container }
+
+        context 'a default install' do
+          it 'raises an exception' do
+            expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+          end
+        end
+
+        context 'a container-based install' do
+          let(:install_type) { :container }
+
+          it 'raises an exception' do
+            expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+          end
+        end
       end
     end
   end

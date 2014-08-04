@@ -24,6 +24,7 @@ module Shipyard
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     module Agent
+      #
       # The name of the agent application in GitHub repos, file names, etc.
       #
       # @return [String]
@@ -31,6 +32,16 @@ module Shipyard
       def app_name
         'shipyard-agent'
       end
+
+      #
+      # The name of the Docker image/container for container-based installs
+      #
+      # @return [String]
+      #
+      def docker_image_name
+        'shipyard/agent'
+      end
+      alias_method :docker_container_name, :docker_image_name
     end
   end
 

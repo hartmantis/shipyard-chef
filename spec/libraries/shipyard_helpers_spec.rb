@@ -29,6 +29,14 @@ describe Shipyard::Helpers::Agent do
       expect(test_obj.app_name).to eq('shipyard-agent')
     end
   end
+
+  [:docker_image_name, :docker_container_name].each do |m|
+    describe "##{m}" do
+      it 'returns "shipyard/agent"' do
+        expect(test_obj.send(m)).to eq('shipyard/agent')
+      end
+    end
+  end
 end
 
 describe Shipyard::Exceptions::MethodNotImplemented do

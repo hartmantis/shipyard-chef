@@ -23,6 +23,7 @@ require 'chef/mixin/params_validate'
 require_relative 'provider_shipyard_agent_application'
 require_relative 'provider_shipyard_agent_application_container'
 require_relative 'provider_shipyard_agent_application_standard'
+require_relative 'shipyard_helpers'
 
 class Chef
   class Resource
@@ -30,7 +31,7 @@ class Chef
     #
     # @author Jonathan Hartman <j@p4nt5.com>
     class ShipyardAgentApplication < Resource
-      DEFAULT_IMAGE = 'shipyard/agent'
+      include Shipyard::Helpers::Agent
 
       attr_accessor :installed
       alias_method :installed?, :installed
@@ -77,16 +78,16 @@ class Chef
       # @return [String, NilClass]
       #
       def docker_image(arg = nil)
-        set_or_return(:docker_image,
-                      arg,
-                      kind_of: [String, NilClass],
-                      default: install_type == :container ? DEFAULT_IMAGE : nil,
-                      callbacks: {
-                        'A `docker_image` requires a container-based install' =>
-                          ->(a) { a.nil? ? true : install_type == :container },
-                        'A `docker_image` cannot be used with a `source`' =>
-                          ->(a) { a.nil? ? true : source.nil? }
-                      })
+        set_or_return(
+          :docker_image,
+          arg,
+          kind_of: [String, NilClass],
+          default: install_type == :container ? docker_image_name : nil,
+          callbacks: { 'A `docker_image` requires a container install' =>
+                         ->(a) { a.nil? ? true : install_type == :container },
+                       'A `docker_image` cannot be used with a `source`' =>
+                         ->(a) { a.nil? ? true : source.nil? } }
+        )
       end
 
       #

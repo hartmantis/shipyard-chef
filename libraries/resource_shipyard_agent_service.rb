@@ -60,6 +60,23 @@ class Chef
                       equal_to: [:standard, :container],
                       default: :standard)
       end
+
+      #
+      # The Docker container to be used for a container-based service
+      #
+      # @param [String, NilClass]
+      # @return [String, NilClass]
+      #
+      def docker_container(arg = nil)
+        set_or_return(
+          :docker_container,
+          arg,
+          kind_of: [String, NilClass],
+          default: install_type == :container ? docker_container_name : nil,
+          callbacks: { 'A `docker_container` requires a container install' =>
+                         ->(a) { a.nil? ? true : install_type == :container } }
+        )
+      end
     end
   end
 end

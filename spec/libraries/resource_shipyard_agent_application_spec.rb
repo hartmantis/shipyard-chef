@@ -121,7 +121,7 @@ describe Chef::Resource::ShipyardAgentApplication do
     end
 
     context 'no override provided' do
-      context 'a default application install' do
+      context 'a default install' do
         it 'returns nil' do
           expect(resource.docker_image).to eq(nil)
         end
@@ -139,7 +139,7 @@ describe Chef::Resource::ShipyardAgentApplication do
     context 'a valid override provided' do
       let(:override) { 'repo/image' }
 
-      context 'a default application install' do
+      context 'a default install' do
         it 'raises an exception' do
           expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
         end
@@ -157,7 +157,7 @@ describe Chef::Resource::ShipyardAgentApplication do
     context 'an invalid override provided' do
       let(:override) { :image }
 
-      context 'a default application install' do
+      context 'a default install' do
         it 'raises an exception' do
           expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
         end
