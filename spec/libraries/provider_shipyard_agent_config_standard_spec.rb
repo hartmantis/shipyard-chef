@@ -30,6 +30,7 @@ describe Chef::Provider::ShipyardAgentConfig::Standard do
            cookbook_name: :shipyard,
            source: 'conf.erb',
            path: '/etc/ship.conf',
+           ip: '1.2.3.4',
            url: 'http://1.2.3.4',
            key: 'abcd')
   end
@@ -120,8 +121,8 @@ describe Chef::Provider::ShipyardAgentConfig::Standard do
       expect(provider.send(:conf_file).name).to eq('/etc/ship.conf')
     end
 
-    it 'uses the URL and key specified by the resource' do
-      expected = { url: 'http://1.2.3.4', key: 'abcd' }
+    it 'uses the IP, URL, and key specified by the resource' do
+      expected = { ip: '1.2.3.4', url: 'http://1.2.3.4', key: 'abcd' }
       expect(provider.send(:conf_file).variables).to eq(expected)
     end
   end

@@ -20,6 +20,7 @@
 
 require 'chef/resource'
 require 'chef/mixin/params_validate'
+require 'ipaddr'
 require_relative 'shipyard_helpers'
 require_relative 'provider_shipyard_agent_config'
 require_relative 'provider_shipyard_agent_config_container'
@@ -97,6 +98,23 @@ class Chef
                       arg,
                       kind_of: String,
                       default: ::File.join('/etc/default', app_name))
+      end
+
+      #
+      # The IP address to bind to
+      #
+      # @param [String, NilClass] arg
+      # @return [String]
+      #
+      def ip(arg = nil)
+        set_or_return(:ip,
+                      arg,
+                      kind_of: String,
+                      default: '127.0.0.1',
+                      callbacks: {
+                        'An `ip` must be a valid IP address' =>
+                          ->(a) { a.nil? ? true : !IPAddr.new(a).nil? }
+                      })
       end
 
       #

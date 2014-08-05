@@ -57,10 +57,9 @@ class Chef
           )
           @conf_file.cookbook(new_resource.cookbook || cookbook_name.to_s)
           @conf_file.source(new_resource.source)
-          @conf_file.variables(
-            url: new_resource.url,
-            key: new_resource.key
-          )
+          @conf_file.variables(ip: new_resource.ip,
+                               url: new_resource.url,
+                               key: new_resource.key)
           @conf_file
         end
 

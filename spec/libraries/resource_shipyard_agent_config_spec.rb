@@ -167,6 +167,45 @@ describe Chef::Resource::ShipyardAgentConfig do
     end
   end
 
+  describe '#ip' do
+    let(:override) { nil }
+    let(:resource) do
+      r = super()
+      r.ip(override)
+      r
+    end
+
+    context 'no override provided' do
+      it 'defaults to localhost' do
+        expect(resource.ip).to eq('127.0.0.1')
+      end
+    end
+
+    context 'a valid IPv4 override provided' do
+      let(:override) { '1.2.3.4' }
+
+      it 'returns the override' do
+        expect(resource.ip).to eq('1.2.3.4')
+      end
+    end
+
+    context 'a valid IPv6 override provided' do
+      let(:override) { '2001:db8::2:1' }
+
+      it 'returns the override' do
+        expect(resource.ip).to eq('2001:db8::2:1')
+      end
+    end
+
+    context 'an invalid override provided' do
+      let(:override) { '1.2.3.x' }
+
+      it 'raises an exception' do
+        expect { resource }.to raise_error(IPAddr::InvalidAddressError)
+      end
+    end
+  end
+
   describe '#url' do
     let(:override) { nil }
     let(:resource) do
