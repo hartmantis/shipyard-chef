@@ -17,3 +17,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+# Install Python
+
+# Install Redis
+
+# Install Node.js
+
+# Install Hipache
+
+# Create shipyard resource instance
