@@ -18,6 +18,8 @@
 # limitations under the License.
 #
 
+default['shipyard']['install_type'] = :standard
+
 default['shipyard']['agent']['install_type'] = :standard
 default['shipyard']['agent']['version'] = 'latest'
 default['shipyard']['agent']['host'] = 'http://localhost:8000'
