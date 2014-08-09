@@ -65,6 +65,7 @@ class Chef
           @init_script.cookbook(cookbook_name.to_s)
           @init_script.source(::File.join(init_system.to_s,
                                           "#{app_name}.conf.erb"))
+          @init_script.variables(config_file: new_resource.config_file)
           @init_script
         end
 

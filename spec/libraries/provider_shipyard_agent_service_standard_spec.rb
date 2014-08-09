@@ -26,6 +26,7 @@ describe Chef::Provider::ShipyardAgentService::Standard do
     double(name: 'my_agent',
            install_type: 'test',
            cookbook_name: :shipyard,
+           config_file: '/etc/default/shipyard-agent',
            :'created=' => true)
   end
   let(:provider) { described_class.new(new_resource, nil) }
@@ -136,6 +137,11 @@ describe Chef::Provider::ShipyardAgentService::Standard do
     it 'sets up the correct destination path' do
       expected = '/etc/init/shipyard-agent'
       expect(provider.send(:init_script).name).to eq(expected)
+    end
+
+    it 'sets up the correct config file variable' do
+      expect(provider.send(:init_script).variables[:config_file])
+        .to eq('/etc/default/shipyard-agent')
     end
   end
 
