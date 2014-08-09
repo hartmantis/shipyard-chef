@@ -75,6 +75,54 @@ describe Chef::Resource::ShipyardAgentService do
     end
   end
 
+  describe '#config_file' do
+    let(:override) { nil }
+    let(:resource) do
+      r = super()
+      r.config_file(override)
+      r
+    end
+
+    before(:each) do
+      path = override || '/etc/default/shipyard-agent'
+      allow(::File).to receive(:exist?).with(path).and_return(true)
+    end
+
+    context 'no override provided' do
+      it 'defaults to "/etc/default/shipyard-agent"' do
+        expect(resource.config_file).to eq('/etc/default/shipyard-agent')
+      end
+    end
+
+    context 'a valid override provided' do
+      let(:override) { '/tmp/agent' }
+
+      it 'returns the override' do
+        expect(resource.config_file).to eq('/tmp/agent')
+      end
+    end
+
+    context 'an invalid override provided' do
+      let(:install_type) { :monkeys }
+
+      it 'raises an exception' do
+        expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+      end
+    end
+
+    context 'a missing config file' do
+      let(:override) { '/etc/wiggles' }
+
+      before(:each) do
+        allow(::File).to receive(:exist?).with(override).and_return(false)
+      end
+
+      it 'raises an exception' do
+        expect { resource }.to raise_error(Chef::Exceptions::ValidationFailed)
+      end
+    end
+  end
+
   describe '#docker_container' do
     let(:override) { nil }
     let(:resource) do

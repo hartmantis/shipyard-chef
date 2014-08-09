@@ -62,6 +62,21 @@ class Chef
       end
 
       #
+      # A path to the config file for the agent
+      #
+      # @param [String, NilClass]
+      # @return [String]
+      #
+      def config_file(arg = nil)
+        set_or_return(:config_file,
+                      arg,
+                      kind_of: String,
+                      default: ::File.join('/etc/default', app_name),
+                      callbacks: { 'Invalid config file provided' =>
+                                   ->(a) { ::File.exist?(a) } })
+      end
+
+      #
       # The Docker container to be used for a container-based service
       #
       # @param [String, NilClass]
