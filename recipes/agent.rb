@@ -18,7 +18,7 @@
 # limitations under the License.
 #
 
-if node['shipyard']['agent']['install_type'] == :container
+if [:container, 'container'].include?(node['shipyard']['agent']['install_type'])
   include_recipe 'docker'
 end
 
