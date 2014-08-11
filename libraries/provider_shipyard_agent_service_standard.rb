@@ -34,26 +34,47 @@ class Chef
       class Standard < ShipyardAgentService
         include Shipyard::Helpers::Agent
 
+        #
+        # Drop off the init script for the service
+        #
         def action_create
           init_script.run_action(:create)
         end
 
+        #
+        # Delete the init script (after stopping and disabling the service)
+        #
         def action_delete
           action_stop
           action_disable
           init_script.run_action(:delete)
         end
 
+        #
+        # Pass the enable/disable/start/stop actions on to the inner service
+        # resource
+        #
         [:enable, :disable, :start, :stop].each do |act|
           define_method(:"action_#{act}", proc { service.run_action(act) })
         end
 
+        #
+        # Check whether the init script exists on the filesystem
+        #
+        # @return [TrueClass, FalseClass]
+        #
         def created?
           ::File.exist?(init_script.name)
         end
 
         private
 
+
+        #
+        # The inner service resource for this service
+        #
+        # @return [Chef::Resource::Service]
+        #
         def service
           @service ||= Chef::Resource::Service.new(app_name, run_context)
           @service.provider(
@@ -62,6 +83,11 @@ class Chef
           @service
         end
 
+        #
+        # The template resource for the init script
+        #
+        # @return [Chef::Resource::Template]
+        #
         def init_script
           @init_script ||= Chef::Resource::Template.new(
             ::File.join(init_dir, "#{app_name}.conf"), run_context
@@ -73,6 +99,11 @@ class Chef
           @init_script
         end
 
+        #
+        # Determine the init directory based on the node's init system
+        #
+        # @return [String]
+        #
         def init_dir
           case init_system
           when :upstart
@@ -80,6 +111,11 @@ class Chef
           end
         end
 
+        #
+        # Return the init system for this node
+        #
+        # @return [Symbol]
+        #
         def init_system
           :upstart
         end
