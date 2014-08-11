@@ -18,6 +18,10 @@
 # limitations under the License.
 #
 
+if node['shipyard']['host']['install_type'] == :container
+  include_recipe 'docker'
+end
+
 # Install Python
 
 # Install Redis
