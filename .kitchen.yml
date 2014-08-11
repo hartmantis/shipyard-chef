@@ -9,7 +9,10 @@ platforms:
   - name: ubuntu-14.04
 
 suites:
-  - name: default
+  - name: standard
     run_list:
-      - recipe[shipyard::agent]
+      - recipe[shipyard_test::agent_standard]
     attributes:
+  - name: container
+    run_list:
+      - recipe[shipyard_test::agent_container]
