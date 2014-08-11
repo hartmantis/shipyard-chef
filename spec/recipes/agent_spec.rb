@@ -1,7 +1,7 @@
 # Encoding: UTF-8
 #
 # Cookbook Name:: shipyard
-# Spec:: recipes/default
+# Spec:: recipes/agent
 #
 # Copyright (C) 2014, Jonathan Hartman
 #
@@ -20,8 +20,26 @@
 
 require 'spec_helper'
 
-describe 'shipyard::default' do
+describe 'shipyard::agent' do
   let(:overrides) { {} }
-  let(:runner) { ChefSpec::Runner.new }
+  let(:runner) do
+    ChefSpec::Runner.new do |node|
+      overrides.each { |k, v| node.set[k] = v }
+    end
+  end
   let(:chef_run) { runner.converge(described_recipe) }
+
+  context 'default attributes' do
+    it 'does not install Docker' do
+      expect(chef_run).to_not include_recipe('docker')
+    end
+  end
+
+  context 'a container-based install' do
+    let(:overrides) { { shipyard: { agent: { install_type: :container } } } }
+
+    it 'installs Docker' do
+      expect(chef_run).to include_recipe('docker')
+    end
+  end
 end

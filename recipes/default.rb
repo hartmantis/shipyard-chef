@@ -17,5 +17,3 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-include_recipe 'docker' if node['shipyard']['install_type'] == :container

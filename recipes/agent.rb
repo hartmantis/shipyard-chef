@@ -18,6 +18,10 @@
 # limitations under the License.
 #
 
+if node['shipyard']['agent']['install_type'] == :container
+  include_recipe 'docker'
+end
+
 shipyard_agent_application 'local_agent' do
   install_type node['shipyard']['agent']['install_type']
   version node['shipyard']['agent']['version']
