@@ -19,7 +19,6 @@ group :development, :test do
   gem 'test-kitchen'
   gem 'kitchen-digitalocean'
   gem 'kitchen-vagrant'
-  gem 'vagrant-wrapper'
   gem 'guard-kitchen'
 end
 
