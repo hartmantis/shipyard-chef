@@ -11,8 +11,12 @@ platforms:
 suites:
   - name: standard
     run_list:
-      - recipe[shipyard_test::agent_standard]
+      - recipe[shipyard::agent]
     attributes:
   - name: container
     run_list:
-      - recipe[shipyard_test::agent_container]
+      - recipe[shipyard::agent]
+    attributes:
+      shipyard:
+        agent:
+          install_type: container
