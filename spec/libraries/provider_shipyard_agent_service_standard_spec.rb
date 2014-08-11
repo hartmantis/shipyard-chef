@@ -91,7 +91,7 @@ describe Chef::Provider::ShipyardAgentService::Standard do
     let(:exist) { nil }
 
     before(:each) do
-      allow(::File).to receive(:exist?).with('/etc/init/shipyard-agent')
+      allow(::File).to receive(:exist?).with('/etc/init/shipyard-agent.conf')
         .and_return(exist)
     end
 
@@ -117,6 +117,11 @@ describe Chef::Provider::ShipyardAgentService::Standard do
       expected = Chef::Resource::Service
       expect(provider.send(:service)).to be_an_instance_of(expected)
     end
+
+    it 'uses the Upstart provider for that service' do
+      expected = Chef::Provider::Service::Upstart
+      expect(provider.send(:service).provider).to eq(expected)
+    end
   end
 
   describe '#init_script' do
@@ -135,7 +140,7 @@ describe Chef::Provider::ShipyardAgentService::Standard do
     end
 
     it 'sets up the correct destination path' do
-      expected = '/etc/init/shipyard-agent'
+      expected = '/etc/init/shipyard-agent.conf'
       expect(provider.send(:init_script).name).to eq(expected)
     end
 

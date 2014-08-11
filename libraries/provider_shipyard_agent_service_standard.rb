@@ -56,11 +56,15 @@ class Chef
 
         def service
           @service ||= Chef::Resource::Service.new(app_name, run_context)
+          @service.provider(
+            Chef::Provider::Service.const_get(init_system.to_s.capitalize)
+          )
+          @service
         end
 
         def init_script
           @init_script ||= Chef::Resource::Template.new(
-            ::File.join(init_dir, app_name), run_context
+            ::File.join(init_dir, "#{app_name}.conf"), run_context
           )
           @init_script.cookbook(cookbook_name.to_s)
           @init_script.source(::File.join(init_system.to_s,

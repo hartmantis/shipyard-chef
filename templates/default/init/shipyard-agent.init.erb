@@ -8,7 +8,7 @@
 # chkconfig: 2345 80 30
 # description: Shipyard is a web UI and container management tool for Docker
 # processname: shipyard-agent
-# config: /etc/default/shipyard-agent
+# config: <%= @config_file %>
 
 ### BEGIN INIT INFO
 # Provides: shipyard-agent
@@ -24,7 +24,7 @@
 . /etc/rc.d/init.d/functions
 
 # Agent config
-. /etc/default/shipyard-agent
+. <%= @config_file %>
 
 RETVAL=0
 prog=shipyard-agent

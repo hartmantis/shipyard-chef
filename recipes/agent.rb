@@ -28,3 +28,7 @@ shipyard_agent_config 'defaults' do
   url node['shipyard']['agent']['url']
   key node['shipyard']['agent']['key']
 end
+
+shipyard_agent_service 'agent' do
+  install_type node['shipyard']['agent']['install_type']
+end
