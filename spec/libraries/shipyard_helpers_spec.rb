@@ -30,11 +30,9 @@ describe Shipyard::Helpers::Agent do
     end
   end
 
-  [:docker_image_name, :docker_container_name].each do |m|
-    describe "##{m}" do
-      it 'returns "shipyard/agent"' do
-        expect(test_obj.send(m)).to eq('shipyard/agent')
-      end
+  describe '#default_docker_image' do
+    it 'returns "shipyard/agent"' do
+      expect(test_obj.send(:default_docker_image)).to eq('shipyard/agent')
     end
   end
 end

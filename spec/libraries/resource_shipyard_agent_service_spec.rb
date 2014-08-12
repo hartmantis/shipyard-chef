@@ -22,13 +22,13 @@ require_relative '../spec_helper'
 require_relative '../../libraries/resource_shipyard_agent_service'
 
 describe Chef::Resource::ShipyardAgentService do
-  [:install_type, :docker_container].each do |i|
+  [:install_type, :docker_image].each do |i|
     let(i) { nil }
   end
   let(:resource) do
     r = Chef::Resource::ShipyardAgentService.new('my_agent', nil)
     r.install_type(install_type)
-    r.docker_container(docker_container)
+    r.docker_image(docker_image)
     r
   end
 
@@ -129,18 +129,18 @@ describe Chef::Resource::ShipyardAgentService do
     end
   end
 
-  describe '#docker_container' do
+  describe '#docker_image' do
     let(:override) { nil }
     let(:resource) do
       r = super()
-      r.docker_container(override)
+      r.docker_image(override)
       r
     end
 
     context 'no override provided' do
       context 'a default install' do
         it 'returns nil' do
-          expect(resource.docker_container).to eq(nil)
+          expect(resource.docker_image).to eq(nil)
         end
       end
 
@@ -148,7 +148,7 @@ describe Chef::Resource::ShipyardAgentService do
         let(:install_type) { :container }
 
         it 'returns "shipyard/agent"' do
-          expect(resource.docker_container).to eq('shipyard/agent')
+          expect(resource.docker_image).to eq('shipyard/agent')
         end
       end
 
@@ -165,7 +165,7 @@ describe Chef::Resource::ShipyardAgentService do
           let(:install_type) { :container }
 
           it 'returns the overridden container' do
-            expect(resource.docker_container).to eq('ship/yard')
+            expect(resource.docker_image).to eq('ship/yard')
           end
         end
       end

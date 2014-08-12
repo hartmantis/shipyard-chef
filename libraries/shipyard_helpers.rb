@@ -34,14 +34,13 @@ module Shipyard
       end
 
       #
-      # The name of the Docker image/container for container-based installs
+      # The default Docker image for container-based installs
       #
       # @return [String]
       #
-      def docker_image_name
+      def default_docker_image
         'shipyard/agent'
       end
-      alias_method :docker_container_name, :docker_image_name
     end
   end
 

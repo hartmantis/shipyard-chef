@@ -81,18 +81,18 @@ class Chef
       end
 
       #
-      # The Docker container to be used for a container-based service
+      # The Docker image to be used for a container-based service
       #
       # @param [String, NilClass]
       # @return [String, NilClass]
       #
-      def docker_container(arg = nil)
+      def docker_image(arg = nil)
         set_or_return(
-          :docker_container,
+          :docker_image,
           arg,
           kind_of: [String, NilClass],
-          default: install_type == :container ? docker_container_name : nil,
-          callbacks: { 'A `docker_container` requires a container install' =>
+          default: install_type == :container ? default_docker_image : nil,
+          callbacks: { 'A `docker_image` requires a container install' =>
                          ->(a) { a.nil? ? true : install_type == :container } }
         )
       end

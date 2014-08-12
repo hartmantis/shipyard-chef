@@ -86,7 +86,7 @@ class Chef
           :docker_image,
           arg,
           kind_of: [String, NilClass],
-          default: install_type == :container ? docker_image_name : nil,
+          default: install_type == :container ? default_docker_image : nil,
           callbacks: { 'A `docker_image` requires a container install' =>
                          ->(a) { a.nil? ? true : install_type == :container },
                        'A `docker_image` cannot be used with a `source`' =>

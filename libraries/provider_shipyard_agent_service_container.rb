@@ -19,6 +19,7 @@
 #
 
 require 'chef/provider'
+require_relative 'shipyard_helpers'
 require_relative 'resource_shipyard_agent_service'
 require_relative 'provider_shipyard_agent_service'
 
@@ -29,6 +30,77 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Container < ShipyardAgentService
+        include Shipyard::Helpers::Agent
+
+        #
+        # Do nothing since the container has no init script
+        #
+        def action_create
+          Chef::Log.debug('Nothing to do in `create` action for a ' \
+                          'container-based service resource')
+        end
+
+        #
+        # Do nothing since the container has no init script
+        #
+        def action_delete
+          Chef::Log.debug('Nothing to do in `delete` action for a ' \
+                          'container-based service resource')
+        end
+
+        #
+        # TODO - Wrap the container in an init system?
+        #
+        def action_enable
+          # TODO
+        end
+
+        #
+        # TODO - Wrap the container in an init system?
+        #
+        def action_disable
+          # TODO
+        end
+
+        #
+        # Start up the agent's Docker container
+        #
+        def action_start
+          container.run_action(:run)
+        end
+
+        #
+        # Kill the agent's Docker container
+        #
+        def action_stop
+          container.run_action(:kill)
+        end
+
+        #
+        # Check whether the resource has been created or not (always true)
+        #
+        # @return [TrueClass, FalseClass]
+        #
+        def created?
+          true
+        end
+
+        private
+
+        #
+        # The inner Docker container resource
+        #
+        # @return [Chef::Resource::DockerContainer
+        #
+        def container
+          @container ||= Chef::Resource::DockerContainer.new(app_name,
+                                                             run_context)
+          @container.image(new_resource.docker_image)
+          @container.detach(true)
+          @container.port('4500:4500')
+          @container.env_file(new_resource.config_file)
+          @container
+        end
       end
     end
   end
