@@ -70,6 +70,12 @@ describe Chef::Resource::ShipyardAgentApplication do
       it 'returns the override symbolized' do
         expect(resource.install_type).to eq(:container)
       end
+
+      it 'sets the corresponding provider' do
+        expected = Chef::Provider::ShipyardAgentApplication::Container
+        expect(resource.provider).to eq(expected)
+        expect(resource.instance_variable_get(:@provider)).to eq(expected)
+      end
     end
 
     context 'an invalid override provided' do

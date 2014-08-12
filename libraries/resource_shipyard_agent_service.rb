@@ -35,6 +35,8 @@ class Chef
 
       attr_accessor :created
 
+      provider_base Chef::Provider::ShipyardAgentService
+
       def initialize(name, run_context = nil)
         super
         @resource_name = :shipyard_agent_service
@@ -54,11 +56,13 @@ class Chef
       # @return [Symbol]
       #
       def install_type(arg = nil)
-        set_or_return(:install_type,
-                      arg.nil? ? arg : arg.to_sym,
-                      kind_of: Symbol,
-                      equal_to: [:standard, :container],
-                      default: :standard)
+        res = set_or_return(:install_type,
+                            arg.nil? ? arg : arg.to_sym,
+                            kind_of: Symbol,
+                            equal_to: [:standard, :container],
+                            default: :standard)
+        provider(arg.to_s.capitalize) if arg
+        res
       end
 
       #
