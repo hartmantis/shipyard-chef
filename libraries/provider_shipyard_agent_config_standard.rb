@@ -31,43 +31,6 @@ class Chef
       #
       # @author Jonathan Hartman <j@p4nt5.com>
       class Standard < ShipyardAgentConfig
-        def action_create
-          conf_dir.recursive(true)
-          conf_dir.run_action(:create)
-          conf_file.run_action(:create)
-          new_resource.created = true
-        end
-
-        def action_delete
-          conf_file.run_action(:delete)
-          conf_dir.only_if(->() { ::Dir.new(something).count == 2 })
-          conf_dir.run_action(:delete)
-          new_resource.created = false
-        end
-
-        def created?
-          ::File.exist?(new_resource.path)
-        end
-
-        private
-
-        def conf_file
-          @conf_file ||= Chef::Resource::Template.new(
-            new_resource.path, run_context
-          )
-          @conf_file.cookbook(new_resource.cookbook || cookbook_name.to_s)
-          @conf_file.source(new_resource.source)
-          @conf_file.variables(ip: new_resource.ip,
-                               url: new_resource.url,
-                               key: new_resource.key)
-          @conf_file
-        end
-
-        def conf_dir
-          @conf_dir ||= Chef::Resource::Directory.new(
-            ::File.dirname(new_resource.path), run_context
-          )
-        end
       end
     end
   end
