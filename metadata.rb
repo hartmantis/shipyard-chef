@@ -9,5 +9,9 @@ long_description 'Installs/configures Shipyard'
 version          '0.1.0'
 
 depends          'docker'
+depends          'python'
+depends          'redis'
+depends          'nodejs'
+depends          'hipache'
 
 supports         'ubuntu'

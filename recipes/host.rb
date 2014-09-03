@@ -18,16 +18,18 @@
 # limitations under the License.
 #
 
-if [:container, 'container'].include?(node['shipyard']['host']['install_type'])
+case node['shipyard']['host']['install_type'].to_s
+when 'container'
   include_recipe 'docker'
+when 'standard'
+  include_recipe 'python'
+  include_recipe 'redis'
+  include_recipe 'nodejs'
+  include_recipe 'hipache'
 end
 
-# Install Python
-
-# Install Redis
-
-# Install Node.js
-
-# Install Hipache
+if [:container, 'container'].include?(node['shipyard']['host']['install_type'])
+  include_recipe 'docker'
+else
 
 # Create shipyard resource instance
